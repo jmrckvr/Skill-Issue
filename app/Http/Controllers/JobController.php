@@ -10,7 +10,9 @@ class JobController extends Controller
 {
     public function show($id)
     {
-        $job = Job::with(['company', 'category', 'applications'])->findOrFail($id);
+        $job = Job::published()
+            ->with(['company', 'category', 'applications'])
+            ->findOrFail($id);
         $relatedJobs = Job::published()
             ->where('company_id', $job->company_id)
             ->where('id', '!=', $id)
