@@ -16,14 +16,14 @@ class JobSearchTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create test data
         $this->seed(\Database\Seeders\CategorySeeder::class);
-        
+
         // Create a test company
         $user = User::factory()->create(['role' => 'employer']);
         $company = Company::factory()->create(['user_id' => $user->id]);
-        
+
         // Create test jobs
         Job::factory(15)->create([
             'company_id' => $company->id,
@@ -89,7 +89,7 @@ class JobSearchTest extends TestCase
         $employer = User::factory()->create(['role' => 'employer']);
         $company = Company::factory()->create(['user_id' => $employer->id]);
         $category = Category::first();
-        
+
         $draftJob = Job::factory()->create([
             'company_id' => $company->id,
             'category_id' => $category->id,

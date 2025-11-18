@@ -88,7 +88,7 @@ class Job extends Model
     public function scopeByKeyword($query, $keyword)
     {
         return $query->where('title', 'like', '%' . $keyword . '%')
-                    ->orWhere('description', 'like', '%' . $keyword . '%');
+            ->orWhere('description', 'like', '%' . $keyword . '%');
     }
 
     public function scopeByCompany($query, $companyId)

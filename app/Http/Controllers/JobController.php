@@ -67,12 +67,12 @@ class JobController extends Controller
     public function edit($id)
     {
         $job = Job::findOrFail($id);
-        
+
         // Verify the job belongs to the current user's company
         if ($job->company_id !== auth()->user()->company->id) {
             abort(403);
         }
-        
+
         $categories = \App\Models\Category::all();
         return view('employer.job-form', compact('job', 'categories'));
     }
@@ -80,7 +80,7 @@ class JobController extends Controller
     public function update(Request $request, $id)
     {
         $job = Job::findOrFail($id);
-        
+
         // Verify the job belongs to the current user's company
         if ($job->company_id !== auth()->user()->company->id) {
             abort(403);
@@ -108,7 +108,7 @@ class JobController extends Controller
     public function publish($id)
     {
         $job = Job::findOrFail($id);
-        
+
         // Verify the job belongs to the current user's company
         if ($job->company_id !== auth()->user()->company->id) {
             abort(403);
@@ -129,7 +129,7 @@ class JobController extends Controller
     public function close($id)
     {
         $job = Job::findOrFail($id);
-        
+
         // Verify the job belongs to the current user's company
         if ($job->company_id !== auth()->user()->company->id) {
             abort(403);
@@ -146,7 +146,7 @@ class JobController extends Controller
     public function destroy($id)
     {
         $job = Job::findOrFail($id);
-        
+
         // Verify the job belongs to the current user's company
         if ($job->company_id !== auth()->user()->company->id) {
             abort(403);
@@ -225,4 +225,3 @@ class JobController extends Controller
         return view('employer.applicants', compact('job', 'applicants'));
     }
 }
-
