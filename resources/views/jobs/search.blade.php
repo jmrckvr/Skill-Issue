@@ -168,24 +168,33 @@
     </div>
 
     <script>
-        // Load job details when clicking on a job card
-        document.querySelectorAll('.job-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                e.preventDefault();
-                const jobId = this.getAttribute('data-job-id');
-                
-                // Highlight the selected job
-                document.querySelectorAll('.job-card').forEach(c => {
-                    c.classList.remove('bg-blue-50', 'border-blue-600');
-                    c.classList.add('border-transparent');
-                });
-                this.classList.add('bg-blue-50', 'border-blue-600');
-                this.classList.remove('border-transparent');
+        // Initialize job card click handlers when DOM is ready
+        function initJobCards() {
+            document.querySelectorAll('.job-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const jobId = this.getAttribute('data-job-id');
+                    
+                    // Highlight the selected job
+                    document.querySelectorAll('.job-card').forEach(c => {
+                        c.classList.remove('bg-blue-50', 'border-blue-600');
+                        c.classList.add('border-transparent');
+                    });
+                    this.classList.add('bg-blue-50', 'border-blue-600');
+                    this.classList.remove('border-transparent');
 
-                // Load job details
-                loadJobDetails(jobId);
+                    // Load job details
+                    loadJobDetails(jobId);
+                });
             });
-        });
+        }
+
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initJobCards);
+        } else {
+            initJobCards();
+        }
 
         function loadJobDetails(jobId) {
             const panel = document.getElementById('jobDetailsPanel');
