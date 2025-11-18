@@ -29,14 +29,12 @@ class JobController extends Controller
 
     public function create()
     {
-        $this->authorize('create', Job::class);
-        return view('jobs.create');
+        $categories = \App\Models\Category::all();
+        return view('employer.job-form', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $this->authorize('create', Job::class);
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -45,7 +43,6 @@ class JobController extends Controller
             'experience_level' => 'required|in:entry,mid,senior,executive',
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0',
-            'currency' => 'required|string|size:3',
             'hide_salary' => 'boolean',
             'category_id' => 'nullable|exists:categories,id',
             'requirements' => 'nullable|string',
@@ -57,26 +54,37 @@ class JobController extends Controller
             return back()->with('error', 'Please create a company profile first.');
         }
 
-        $job = new Job($validated);
-        $job->company_id = $company->id;
-        $job->status = 'draft';
-        $job->save();
+        $validated['company_id'] = $company->id;
+        $validated['currency'] = 'PHP';
+        $validated['status'] = 'draft';
+        $validated['hide_salary'] = $validated['hide_salary'] ?? false;
 
-        return redirect()->route('employer.jobs.edit', $job)->with('success', 'Job created successfully!');
+        $job = Job::create($validated);
+
+        return redirect()->route('jobs.edit', $job)->with('success', 'Job created successfully!');
     }
 
     public function edit($id)
     {
         $job = Job::findOrFail($id);
-        $this->authorize('update', $job);
         
-        return view('jobs.edit', compact('job'));
+        // Verify the job belongs to the current user's company
+        if ($job->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
+        
+        $categories = \App\Models\Category::all();
+        return view('employer.job-form', compact('job', 'categories'));
     }
 
     public function update(Request $request, $id)
     {
         $job = Job::findOrFail($id);
-        $this->authorize('update', $job);
+        
+        // Verify the job belongs to the current user's company
+        if ($job->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -86,7 +94,6 @@ class JobController extends Controller
             'experience_level' => 'required|in:entry,mid,senior,executive',
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0',
-            'currency' => 'required|string|size:3',
             'hide_salary' => 'boolean',
             'category_id' => 'nullable|exists:categories,id',
             'requirements' => 'nullable|string',
@@ -101,7 +108,11 @@ class JobController extends Controller
     public function publish($id)
     {
         $job = Job::findOrFail($id);
-        $this->authorize('update', $job);
+        
+        // Verify the job belongs to the current user's company
+        if ($job->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
 
         if ($job->status == 'published') {
             return back()->with('info', 'Job is already published.');
@@ -118,7 +129,11 @@ class JobController extends Controller
     public function close($id)
     {
         $job = Job::findOrFail($id);
-        $this->authorize('update', $job);
+        
+        // Verify the job belongs to the current user's company
+        if ($job->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
 
         $job->update([
             'status' => 'closed',
@@ -131,7 +146,11 @@ class JobController extends Controller
     public function destroy($id)
     {
         $job = Job::findOrFail($id);
-        $this->authorize('delete', $job);
+        
+        // Verify the job belongs to the current user's company
+        if ($job->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
 
         $job->delete();
 
@@ -157,4 +176,53 @@ class JobController extends Controller
             return back()->with('success', 'Job saved successfully!');
         }
     }
+
+    public function dashboard()
+    {
+        $company = auth()->user()->company;
+        if (!$company) {
+            return view('employer.dashboard', [
+                'jobs' => collect(),
+                'activeJobs' => 0,
+                'totalApplications' => 0,
+                'pendingApplications' => 0,
+            ]);
+        }
+
+        $jobs = Job::where('company_id', $company->id)
+            ->paginate(10);
+
+        $activeJobs = Job::where('company_id', $company->id)
+            ->where('status', 'published')
+            ->count();
+
+        $totalApplications = \App\Models\JobApplication::whereHas('job', function ($q) use ($company) {
+            $q->where('company_id', $company->id);
+        })->count();
+
+        $pendingApplications = \App\Models\JobApplication::whereHas('job', function ($q) use ($company) {
+            $q->where('company_id', $company->id);
+        })->where('status', 'pending')->count();
+
+        return view('employer.dashboard', compact('jobs', 'activeJobs', 'totalApplications', 'pendingApplications'));
+    }
+
+    public function applicants(Job $job, Request $request)
+    {
+        // Verify the job belongs to the current user's company
+        if ($job->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
+
+        $query = $job->applications()->with('user');
+
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $applicants = $query->paginate(10);
+
+        return view('employer.applicants', compact('job', 'applicants'));
+    }
 }
+
