@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- Search Form -->
-                <form action="{{ route('jobs.search') }}" method="GET" class="space-y-6">
+                <form action="{{ route('jobs.search') }}" method="GET" class="space-y-6" id="searchForm">
                     <!-- What Section -->
                     <div>
                         <label class="block text-white text-lg font-semibold mb-4">What</label>
@@ -109,9 +109,9 @@
                 </div>
 
                 @if($jobs->count() > 0)
-                    <div class="space-y-4">
+                    <div class="space-y-4" id="jobsList">
                         @foreach($jobs as $job)
-                            <a href="{{ route('jobs.show', $job) }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition p-6 border-l-4 border-transparent hover:border-blue-600 group">
+                            <a href="javascript:void(0)" class="block bg-white rounded-lg shadow hover:shadow-lg transition p-6 border-l-4 border-transparent hover:border-blue-600 group job-card cursor-pointer" data-job-id="{{ $job->id }}">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex-1">
                                         <h3 class="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition">{{ $job->title }}</h3>
@@ -166,6 +166,158 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Load job details when clicking on a job card
+        document.querySelectorAll('.job-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const jobId = this.getAttribute('data-job-id');
+                
+                // Highlight the selected job
+                document.querySelectorAll('.job-card').forEach(c => {
+                    c.classList.remove('bg-blue-50', 'border-blue-600');
+                    c.classList.add('border-transparent');
+                });
+                this.classList.add('bg-blue-50', 'border-blue-600');
+                this.classList.remove('border-transparent');
+
+                // Load job details
+                loadJobDetails(jobId);
+            });
+        });
+
+        function loadJobDetails(jobId) {
+            const panel = document.getElementById('jobDetailsPanel');
+            
+            // Show loading state
+            panel.innerHTML = '<div class="flex flex-col items-center justify-center h-full"><svg class="animate-spin h-8 w-8 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg><p>Loading job details...</p></div>';
+            
+            // Fetch job details via AJAX
+            fetch(`/api/jobs/${jobId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayJobDetails(data.job);
+                    } else {
+                        panel.innerHTML = '<div class="text-center text-red-600"><p>Error loading job details</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    panel.innerHTML = '<div class="text-center text-red-600"><p>Error loading job details</p></div>';
+                });
+        }
+
+        function displayJobDetails(job) {
+            const panel = document.getElementById('jobDetailsPanel');
+            const isSaved = job.is_saved || false;
+            const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+            
+            let html = `
+                <div class="w-full h-full overflow-y-auto">
+                    <div class="p-6 pb-8">
+                        <!-- Company Logo & Title -->
+                        <div class="mb-6">
+                            ${job.company.logo_path ? `
+                                <img src="/storage/${job.company.logo_path}" alt="${job.company.name}" class="w-16 h-16 rounded mb-4 object-cover">
+                            ` : `
+                                <div class="w-16 h-16 rounded bg-blue-100 flex items-center justify-center mb-4">
+                                    <span class="text-blue-600 font-bold text-lg">${job.company.name.charAt(0)}</span>
+                                </div>
+                            `}
+                            <h3 class="font-bold text-gray-900 text-lg">${job.title}</h3>
+                            <p class="text-gray-600 text-sm mt-1">${job.company.name}</p>
+                        </div>
+
+                        <!-- Key Info -->
+                        <div class="space-y-3 mb-6 pb-6 border-b border-gray-200 text-sm">
+                            <div class="flex items-start">
+                                <span class="text-blue-600 mr-3">📍</span>
+                                <div>
+                                    <p class="text-gray-600 text-xs font-semibold">LOCATION</p>
+                                    <p class="font-bold text-gray-900">${job.location}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-600 mr-3">💰</span>
+                                <div>
+                                    <p class="text-gray-600 text-xs font-semibold">SALARY</p>
+                                    <p class="font-bold text-green-600">${job.formatted_salary}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-purple-600 mr-3">📋</span>
+                                <div>
+                                    <p class="text-gray-600 text-xs font-semibold">JOB TYPE</p>
+                                    <p class="font-bold text-gray-900">${job.job_type.charAt(0).toUpperCase() + job.job_type.slice(1)}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-orange-600 mr-3">⏱️</span>
+                                <div>
+                                    <p class="text-gray-600 text-xs font-semibold">POSTED</p>
+                                    <p class="font-bold text-gray-900">${job.posted_at}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="space-y-2 mb-6">
+                            ${isLoggedIn ? `
+                                <button onclick="showApplyModal(${job.id})" style="background-color: #f53a6b; color: white; padding: 10px 12px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; font-size: 14px;">
+                                    Quick apply
+                                </button>
+                                <form action="/jobs/${job.id}/save" method="POST" style="width: 100%; margin: 0;">
+                                    @csrf
+                                    <button type="submit" style="background-color: ${isSaved ? '#f59e0b' : '#f3f4f6'}; color: ${isSaved ? 'white' : '#1f2937'}; padding: 10px 12px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; font-size: 14px;">
+                                        ${isSaved ? '★ Saved' : '☆ Save'}
+                                    </button>
+                                </form>
+                            ` : `
+                                <a href="/login" style="display: block; background-color: #2563eb; color: white; padding: 10px 12px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; text-align: center; text-decoration: none; font-size: 14px;">
+                                    Login to Apply
+                                </a>
+                            `}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-6">
+                            <h4 class="font-bold text-gray-900 mb-2 text-sm">ABOUT THIS JOB</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed line-clamp-4">${job.description}</p>
+                        </div>
+
+                        <!-- Company Info -->
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-bold text-gray-900 mb-2 text-sm">COMPANY INFO</h4>
+                            <p class="text-gray-600 text-xs mb-2">${job.company.industry || 'Industry not specified'}</p>
+                            <p class="text-gray-600 text-xs">${job.company.employee_count ? job.company.employee_count + '+ employees' : 'Size not specified'}</p>
+                        </div>
+
+                        <!-- Match Section -->
+                        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h4 class="font-bold text-blue-900 mb-2 text-sm">HOW YOU MATCH</h4>
+                            <p class="text-blue-700 text-xs">Matches based on your career history</p>
+                        </div>
+
+                        <!-- View Full Details Link -->
+                        <div class="mt-6">
+                            <a href="/jobs/${job.id}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                                View full details →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            panel.innerHTML = html;
+        }
+
+        function showApplyModal(jobId) {
+            alert('Apply modal for job ' + jobId);
+            // You can implement the apply modal here
+        }
+    </script>
 
     @include('components.footer')
 </body>

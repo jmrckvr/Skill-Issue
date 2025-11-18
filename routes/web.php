@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [HomeController::class, 'search'])->name('jobs.search');
 Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');
+Route::get('/api/jobs/{job}', [JobController::class, 'apiShow'])->name('jobs.api.show');
 
 // Authenticated routes
 Route::middleware('auth', 'verified')->group(function () {

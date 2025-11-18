@@ -27,6 +27,46 @@ class JobController extends Controller
         return view('jobs.show', compact('job', 'relatedJobs', 'isSaved'));
     }
 
+    public function apiShow($id)
+    {
+        $job = Job::published()
+            ->with(['company', 'category'])
+            ->findOrFail($id);
+
+        $isSaved = false;
+        if (auth()->check()) {
+            $isSaved = auth()->user()->savedJobs()->where('job_id', $id)->exists();
+        }
+
+        return response()->json([
+            'success' => true,
+            'job' => [
+                'id' => $job->id,
+                'title' => $job->title,
+                'description' => $job->description,
+                'location' => $job->location,
+                'job_type' => $job->job_type,
+                'experience_level' => $job->experience_level,
+                'category' => $job->category ? $job->category->name : null,
+                'salary_min' => $job->salary_min,
+                'salary_max' => $job->salary_max,
+                'hide_salary' => $job->hide_salary,
+                'formatted_salary' => $job->getFormattedSalary(),
+                'posted_at' => $job->published_at->diffForHumans(),
+                'requirements' => $job->requirements,
+                'benefits' => $job->benefits,
+                'is_saved' => $isSaved,
+                'company' => [
+                    'id' => $job->company->id,
+                    'name' => $job->company->name,
+                    'logo_path' => $job->company->logo_path,
+                    'industry' => $job->company->industry,
+                    'employee_count' => $job->company->employee_count,
+                ],
+            ],
+        ]);
+    }
+
     public function create()
     {
         $categories = \App\Models\Category::all();
