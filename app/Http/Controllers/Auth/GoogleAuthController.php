@@ -51,7 +51,7 @@ class GoogleAuthController extends Controller
 
         // Redirect based on user role
         return redirect()->intended(
-            match($user->role) {
+            match ($user->role) {
                 'employer' => route('employer.dashboard', absolute: false),
                 'admin' => route('admin.dashboard', absolute: false),
                 default => route('dashboard', absolute: false),
