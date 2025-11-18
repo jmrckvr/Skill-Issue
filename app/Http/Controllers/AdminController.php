@@ -40,7 +40,7 @@ class AdminController extends Controller
 
         if ($request->has('search') && $request->search) {
             $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                ->orWhere('email', 'like', '%' . $request->search . '%');
         }
 
         if ($request->has('role') && $request->role) {
