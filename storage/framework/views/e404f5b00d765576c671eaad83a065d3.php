@@ -102,11 +102,11 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Phone</p>
-                            <p class="text-gray-900 font-medium text-sm"><?php echo e($application->applicant_phone ?? 'Not provided'); ?></p>
+                            <p class="text-gray-900 font-medium text-sm"><?php echo e($application->applicant_phone ?? $application->user->contact_number ?? 'Not provided'); ?></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Location</p>
-                            <p class="text-gray-900 font-medium text-sm"><?php echo e($application->applicant_location ?? '-'); ?></p>
+                            <p class="text-gray-900 font-medium text-sm"><?php echo e($application->applicant_location ?? $application->user->location ?? '-'); ?></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Status</p>
@@ -116,26 +116,41 @@
                 </div>
 
                 <!-- Applicant Skills & Bio -->
-                <?php if($application->applicant_skills || $application->applicant_bio): ?>
+                <?php if($application->applicant_skills || $application->applicant_bio || $application->user->skills || $application->user->bio): ?>
                     <div class="bg-white rounded-lg shadow p-6">
-                        <?php if($application->applicant_skills): ?>
+                        <?php if($application->applicant_skills || $application->user->skills): ?>
                             <div class="mb-6">
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">Skills</h3>
                                 <div class="flex flex-wrap gap-2">
-                                    <?php $__currentLoopData = explode(',', $application->applicant_skills); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                            <?php echo e(trim($skill)); ?>
+                                    <?php
+                                        $skills = $application->applicant_skills ?? $application->user->skills;
+                                        $skillList = $skills ? explode(',', $skills) : [];
+                                    ?>
+                                    <?php if(count($skillList) > 0): ?>
+                                        <?php $__currentLoopData = $skillList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                                <?php echo e(trim($skill)); ?>
 
-                                        </span>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </span>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php else: ?>
+                                        <p class="text-gray-600 text-sm">No skills provided</p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endif; ?>
 
-                        <?php if($application->applicant_bio): ?>
+                        <?php if($application->applicant_bio || $application->user->bio): ?>
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">About</h3>
-                                <p class="text-gray-700 leading-relaxed"><?php echo e($application->applicant_bio); ?></p>
+                                <?php
+                                    $bio = $application->applicant_bio ?? $application->user->bio;
+                                ?>
+                                <?php if($bio): ?>
+                                    <p class="text-gray-700 leading-relaxed"><?php echo e($bio); ?></p>
+                                <?php else: ?>
+                                    <p class="text-gray-600 text-sm">No bio provided</p>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
