@@ -59,6 +59,7 @@ Route::middleware('auth', 'verified')->group(function () {
 
         // Legacy save route
         Route::post('/jobs/{job}/save', [JobController::class, 'saveJob'])->name('jobs.save');
+        Route::delete('/jobs/{job}/save', [SavedJobController::class, 'destroy'])->name('jobs.unsave');
 
         // Job application routes
         Route::get('/jobs/{job}/apply', [JobApplicationController::class, 'apply'])->name('applications.apply');

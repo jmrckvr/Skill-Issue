@@ -81,31 +81,32 @@
                     <div id="savedContent" class="tab-content">
                         <?php if($savedJobs && $savedJobs->count() > 0): ?>
                             <div class="space-y-4">
-                                <?php $__currentLoopData = $savedJobs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $job): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php $__currentLoopData = $savedJobs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $savedJob): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-300 hover:shadow-md transition">
                                         <div class="flex items-start justify-between gap-4">
                                             <div class="flex-1">
-                                                <h3 class="text-lg font-bold text-gray-900 mb-2"><?php echo e($job->title); ?></h3>
-                                                <?php if($job->company): ?>
-                                                    <p class="text-gray-600 mb-3"><?php echo e($job->company->name); ?></p>
+                                                <h3 class="text-lg font-bold text-gray-900 mb-2"><?php echo e($savedJob->job->title); ?></h3>
+                                                <?php if($savedJob->job->company): ?>
+                                                    <p class="text-gray-600 mb-3"><?php echo e($savedJob->job->company->name); ?></p>
                                                 <?php endif; ?>
                                                 <div class="flex flex-wrap gap-3 mb-4">
-                                                    <?php if($job->location): ?>
-                                                        <span class="text-sm text-gray-600">📍 <?php echo e($job->location); ?></span>
+                                                    <?php if($savedJob->job->location): ?>
+                                                        <span class="text-sm text-gray-600">📍 <?php echo e($savedJob->job->location); ?></span>
                                                     <?php endif; ?>
-                                                    <?php if($job->salary_min && $job->salary_max): ?>
-                                                        <span class="text-sm text-gray-600">💰 $<?php echo e(number_format($job->salary_min)); ?> - $<?php echo e(number_format($job->salary_max)); ?></span>
+                                                    <?php if($savedJob->job->salary_min && $savedJob->job->salary_max): ?>
+                                                        <span class="text-sm text-gray-600">💰 $<?php echo e(number_format($savedJob->job->salary_min)); ?> - $<?php echo e(number_format($savedJob->job->salary_max)); ?></span>
                                                     <?php endif; ?>
                                                 </div>
-                                                <p class="text-sm text-gray-600">Saved <?php echo e($job->created_at->diffForHumans()); ?></p>
+                                                <p class="text-sm text-gray-600">Saved <?php echo e($savedJob->created_at->diffForHumans()); ?></p>
                                             </div>
                                             <div class="flex-shrink-0 flex gap-2">
-                                                <a href="<?php echo e(route('jobs.show', $job)); ?>" 
+                                                <a href="<?php echo e(route('jobs.show', $savedJob->job)); ?>" 
                                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
                                                     View
                                                 </a>
-                                                <form action="<?php echo e(route('jobs.save', $job)); ?>" method="POST" style="display: inline;">
+                                                <form action="<?php echo e(route('jobs.unsave', $savedJob->job)); ?>" method="POST" style="display: inline;">
                                                     <?php echo csrf_field(); ?>
+                                                    <?php echo method_field('DELETE'); ?>
                                                     <button type="submit" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-semibold rounded-lg transition" title="Remove from saved">
                                                         ❌
                                                     </button>
