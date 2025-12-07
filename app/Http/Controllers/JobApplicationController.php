@@ -21,16 +21,16 @@ class JobApplicationController extends Controller
     {
         // Check if user is an applicant
         if (!auth()->check()) {
-            return redirect()->route('login');
+            return redirect()->route('login')->with('error', 'Please login to apply for jobs.');
         }
 
         if (!auth()->user()->isApplicant()) {
-            return back()->with('error', 'Only applicants can apply for jobs.');
+            return redirect()->route('home')->with('error', 'Only applicants can apply for jobs.');
         }
 
         // Verify email
         if (!auth()->user()->email_verified_at) {
-            return back()->with('error', 'Please verify your email before applying.');
+            return redirect()->route('home')->with('error', 'Please verify your email before applying.');
         }
 
         // Check if user already applied
@@ -39,7 +39,7 @@ class JobApplicationController extends Controller
             ->exists();
 
         if ($alreadyApplied) {
-            return back()->with('error', 'You have already applied for this job.');
+            return redirect()->route('home')->with('error', 'You have already applied for this job.');
         }
 
         return view('applications.apply', compact('job'));

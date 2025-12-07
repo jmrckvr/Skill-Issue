@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ isset($job) ? 'Edit' : 'Create' }} Job - JobStreet</title>
+    <title>{{ isset($job) ? 'Edit' : 'Create' }} Job - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">

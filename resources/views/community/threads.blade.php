@@ -120,19 +120,20 @@
                                         <!-- Company Avatar/Logo -->
                                         <div class="flex-shrink-0">
                                             @if($thread->company->logo_path)
-                                                @if(str_starts_with($thread->company->logo_path, 'http'))
-                                                    <img src="{{ $thread->company->logo_path }}" 
-                                                         alt="{{ $thread->company->name }}"
-                                                         class="w-12 h-12 rounded-full object-cover bg-gradient-to-br from-blue-400 to-blue-600">
-                                                @elseif(str_starts_with($thread->company->logo_path, 'logos/'))
-                                                    <img src="{{ asset($thread->company->logo_path) }}" 
-                                                         alt="{{ $thread->company->name }}"
-                                                         class="w-12 h-12 rounded-full object-cover bg-gradient-to-br from-blue-400 to-blue-600">
-                                                @else
-                                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
-                                                        {{ substr($thread->company->name, 0, 1) }}
-                                                    </div>
-                                                @endif
+                                                @php
+                                                    $logoUrl = null;
+                                                    if (filter_var($thread->company->logo_path, FILTER_VALIDATE_URL)) {
+                                                        $logoUrl = $thread->company->logo_path;
+                                                    } elseif (str_starts_with($thread->company->logo_path, 'logos/')) {
+                                                        $logoUrl = asset($thread->company->logo_path);
+                                                    } else {
+                                                        $logoUrl = asset('storage/' . $thread->company->logo_path);
+                                                    }
+                                                @endphp
+                                                <img src="{{ $logoUrl }}" 
+                                                     alt="{{ $thread->company->name }}"
+                                                     class="w-12 h-12 rounded-full object-cover"
+                                                     loading="lazy" decoding="async">
                                             @else
                                                 <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
                                                     {{ substr($thread->company->name, 0, 1) }}

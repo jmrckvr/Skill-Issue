@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users - JobStreet</title>
+    <title>Manage Users - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
@@ -29,7 +29,7 @@
                     <option value="">All Roles</option>
                     <option value="admin" @if(request('role') === 'admin') selected @endif>Admin</option>
                     <option value="employer" @if(request('role') === 'employer') selected @endif>Employer</option>
-                    <option value="jobseeker" @if(request('role') === 'jobseeker') selected @endif>Jobseeker</option>
+                    <option value="applicant" @if(request('role') === 'applicant') selected @endif>Applicant</option>
                 </select>
 
                 <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -58,7 +58,7 @@
                             <td class="px-6 py-4 text-gray-600">{{ $user->email }}</td>
                             <td class="px-6 py-4">
                                 <span class="text-xs px-2 py-1 rounded-full @if($user->role === 'admin') bg-red-100 text-red-800 @elseif($user->role === 'employer') bg-blue-100 text-blue-800 @else bg-green-100 text-green-800 @endif">
-                                    {{ ucfirst($user->role) }}
+                                    @if($user->role === 'jobseeker' || $user->role === 'applicant') Applicant @else {{ ucfirst($user->role) }} @endif
                                 </span>
                             </td>
                             <td class="px-6 py-4">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobStreet - Find Your Perfect Job</title>
+    <title>Skill Issue - Find Your Perfect Job</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
 <body class="bg-white">
@@ -21,20 +21,12 @@
             <!-- Search Bar -->
             <form action="<?php echo e(route('jobs.search')); ?>" method="GET" class="max-w-5xl mx-auto">
                 <div class="space-y-6">
-                    <!-- What and Where Labels -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-                        <div>
-                            <label class="text-white text-lg font-semibold mb-2 block">What</label>
-                        </div>
-                        <div>
-                            <label class="text-white text-lg font-semibold mb-2 block">Where</label>
-                        </div>
-                    </div>
 
                     <!-- Input Fields -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         <!-- What Input -->
                         <div class="md:col-span-1">
+                            <label class="text-white text-lg font-semibold mb-2 block">What</label>
                             <input type="text" name="keyword" placeholder="Enter keywords" 
                                 class="w-full px-5 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium"
                                 value="<?php echo e(request('keyword', '')); ?>">
@@ -56,25 +48,19 @@
                         </div>
 
                         <!-- Where Input and Search Button -->
-                        <div class="md:col-span-1 flex gap-3">
-                            <input type="text" name="location" placeholder="Enter suburb, city, or region" 
-                                class="flex-1 px-5 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium"
-                                value="<?php echo e(request('location', '')); ?>">
-                            <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-lg font-bold transition duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap">
-                                SEEK
-                            </button>
+                        <div class="md:col-span-1">
+                            <label class="text-white text-lg font-semibold mb-2 block">Where</label>
+                            <div class="flex gap-3">
+                                <input type="text" name="location" placeholder="Enter suburb, city, or region" 
+                                    class="flex-1 px-5 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium"
+                                    value="<?php echo e(request('location', '')); ?>">
+                                <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-lg font-bold transition duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap">
+                                    SEEK
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- More Options Link -->
-                    <div class="text-right">
-                        <a href="<?php echo e(route('jobs.search')); ?>" class="text-blue-200 hover:text-white font-medium text-sm transition duration-300 inline-flex items-center gap-1">
-                            More options 
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5"></path>
-                            </svg>
-                        </a>
-                    </div>
                 </div>
             </form>
         </div>
@@ -119,7 +105,7 @@
                         class="p-6 bg-white border-2 border-gray-100 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-300 text-center transform hover:-translate-y-1">
                         <div class="text-4xl mb-3"><?php echo e($category->icon ?? '💼'); ?></div>
                         <p class="font-semibold text-gray-900 text-sm md:text-base"><?php echo e($category->name); ?></p>
-                        <p class="text-xs md:text-sm text-gray-500 mt-2 font-medium"><?php echo e($category->job_count); ?> <?php echo e($category->job_count === 1 ? 'job' : 'jobs'); ?></p>
+                        <p class="text-xs md:text-sm text-gray-500 mt-2 font-medium"><?php echo e($category->jobs_count ?? 0); ?> <?php echo e(($category->jobs_count ?? 0) === 1 ? 'job' : 'jobs'); ?></p>
                     </a>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
@@ -183,7 +169,7 @@
     <div class="py-16 md:py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to find your next opportunity?</h2>
-            <p class="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">Join thousands of job seekers who've found their perfect job on JobStreet</p>
+            <p class="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">Join thousands of job seekers who've found their perfect job on Skill Issue</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="<?php echo e(route('jobs.search')); ?>" class="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition transform hover:scale-105">
                     Browse Jobs

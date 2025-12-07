@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Employers - JobStreet</title>
+    <title>For Employers - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body { margin: 0; padding: 0; }
@@ -80,7 +80,7 @@
     <!-- Features Section -->
     <div style="padding: 80px 20px; background: #f9fafb;">
         <div class="container">
-            <h2 style="font-size: 40px; font-weight: bold; text-align: center; color: #111827; margin: 0 0 50px 0;">Why Choose JobStreet?</h2>
+            <h2 style="font-size: 40px; font-weight: bold; text-align: center; color: #111827; margin: 0 0 50px 0;">Why Choose Skill Issue?</h2>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
                 <!-- Feature 1 -->
@@ -133,7 +133,7 @@
         <div class="container">
             <h2 style="font-size: 40px; font-weight: bold; margin: 0 0 20px 0;">Ready to Start Hiring?</h2>
             <p style="font-size: 18px; color: #dbeafe; margin: 0 0 30px 0; max-width: 600px; margin-left: auto; margin-right: auto;">
-                Join hundreds of companies hiring on JobStreet. It's free, fast, and easy.
+                Join hundreds of companies hiring on Skill Issue. It's free, fast, and easy.
             </p>
             <a href="{{ route('register-employer') }}" style="background: #ec4899; color: white; padding: 16px 40px; border-radius: 8px; font-weight: bold; text-decoration: none; display: inline-block; font-size: 16px; transition: all 0.3s;">
                 Create Your Account Now
@@ -144,7 +144,7 @@
     <!-- Footer -->
     <footer style="background: #111827; color: #9ca3af; padding: 40px 20px; text-align: center;">
         <div class="container">
-            <p style="margin: 0; font-size: 14px;">&copy; 2024 JobStreet. All rights reserved.</p>
+            <p style="margin: 0; font-size: 14px;">&copy; 2025 Skill Issue. All rights reserved.</p>
         </div>
     </footer>
 </body>

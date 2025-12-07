@@ -41,9 +41,13 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'applicant', // Sign-In registration always creates Applicant accounts
+            'is_applicant' => true, // Set applicant flag
         ]);
 
         event(new Registered($user));
+
+        // Auto-verify email for applicants AFTER event dispatch
+        $user->update(['email_verified_at' => now()]);
 
         Auth::login($user);
 

@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - JobStreet</title>
+    <title>Sign In - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50">
+<body style="background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%); min-height: 100vh; margin: 0;">
     <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div class="w-full max-w-md">
             <!-- Header -->
             <div class="text-center mb-8">
                 <a href="{{ route('home') }}" class="inline-block">
-                    <div class="text-3xl font-bold text-blue-600">JobStreet</div>
-                    <p class="text-gray-600 text-sm mt-1">Find your dream job today</p>
+                    <div class="text-3xl font-bold text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Skill Issue</div>
+                    <p class="text-white text-sm mt-1" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Find your dream job today</p>
                 </a>
             </div>
 

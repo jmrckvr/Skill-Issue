@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo e($job->title); ?> - JobStreet</title>
+    <title><?php echo e($job->title); ?> - Skill Issue</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
 <body class="bg-gray-50">
@@ -24,22 +24,20 @@
                         </div>
                         <div class="flex gap-4 ml-6">
                             <?php
-                                $jobLogoUrl = null;
-                                if ($job->logo) {
-                                    $jobLogoUrl = str_starts_with($job->logo, 'http') ? $job->logo : asset('storage/' . $job->logo);
-                                }
                                 $companyLogoUrl = null;
                                 if ($job->company->logo_path) {
-                                    $companyLogoUrl = str_starts_with($job->company->logo_path, 'http') ? $job->company->logo_path : asset('storage/' . $job->company->logo_path);
+                                    if (filter_var($job->company->logo_path, FILTER_VALIDATE_URL)) {
+                                        $companyLogoUrl = $job->company->logo_path;
+                                    } elseif (str_starts_with($job->company->logo_path, 'logos/')) {
+                                        $companyLogoUrl = asset($job->company->logo_path);
+                                    } else {
+                                        $companyLogoUrl = asset('storage/' . $job->company->logo_path);
+                                    }
                                 }
                             ?>
-                            <?php if($jobLogoUrl): ?>
-                                <img src="<?php echo e($jobLogoUrl); ?>" alt="<?php echo e($job->title); ?> Logo" 
-                                    class="w-24 h-24 rounded object-cover" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22 viewBox=%220 0 96 96%22%3E%3Crect width=%2296%22 height=%2296%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
-                            <?php endif; ?>
                             <?php if($companyLogoUrl): ?>
                                 <img src="<?php echo e($companyLogoUrl); ?>" alt="<?php echo e($job->company->name); ?>" 
-                                    class="w-24 h-24 rounded object-cover" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22 viewBox=%220 0 96 96%22%3E%3Crect width=%2296%22 height=%2296%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
+                                    class="w-24 h-24 rounded object-cover" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22 viewBox=%220 0 96 96%22%3E%3Crect width=%2296%22 height=%2296%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
                             <?php else: ?>
                                 <div class="w-24 h-24 rounded bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
                                     <span class="text-blue-600 font-bold text-2xl"><?php echo e(substr($job->company->name, 0, 1)); ?></span>
@@ -150,13 +148,19 @@
                     <?php
                         $companyLogoUrl = null;
                         if ($job->company->logo_path) {
-                            $companyLogoUrl = str_starts_with($job->company->logo_path, 'http') ? $job->company->logo_path : asset('storage/' . $job->company->logo_path);
+                            if (filter_var($job->company->logo_path, FILTER_VALIDATE_URL)) {
+                                $companyLogoUrl = $job->company->logo_path;
+                            } elseif (str_starts_with($job->company->logo_path, 'logos/')) {
+                                $companyLogoUrl = asset($job->company->logo_path);
+                            } else {
+                                $companyLogoUrl = asset('storage/' . $job->company->logo_path);
+                            }
                         }
                     ?>
                     
                     <?php if($companyLogoUrl): ?>
                         <img src="<?php echo e($companyLogoUrl); ?>" alt="<?php echo e($job->company->name); ?>" 
-                            class="w-full h-32 rounded-lg object-cover mb-4" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22128%22 viewBox=%220 0 400 128%22%3E%3Crect width=%22400%22 height=%22128%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
+                            class="w-full h-32 rounded-lg object-cover mb-4" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22128%22 viewBox=%220 0 400 128%22%3E%3Crect width=%22400%22 height=%22128%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
                     <?php else: ?>
                         <div class="w-full h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg mb-4 flex items-center justify-center">
                             <span class="text-white font-bold text-4xl"><?php echo e(substr($job->company->name, 0, 1)); ?></span>
@@ -186,24 +190,6 @@
                             Visit website →
                         </a>
                     <?php endif; ?>
-                </div>
-
-                <!-- How You Match -->
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                        How you match
-                        <span class="ml-2 text-gray-400 text-base">ⓘ</span>
-                    </h3>
-                    <p class="text-sm text-gray-600 mb-4">Matches based on your career history</p>
-                    <div class="space-y-2">
-                        <a href="#" class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold hover:bg-blue-100 transition">
-                            + <?php echo e($job->experience_level ?? 'Professional'); ?>
-
-                        </a>
-                        <div class="flex items-center text-sm text-gray-600 mt-3">
-                            <span>Show all →</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

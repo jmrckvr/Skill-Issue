@@ -11,7 +11,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::withCount(['jobs' => function ($query) {
+            $query->where('status', 'published');
+        }])->orderBy('id')->get();
         $latestJobs = Job::published()->with('company')->latest('published_at')->take(12)->get();
         $totalJobs = Job::published()->count();
         $totalCompanies = \App\Models\Company::count();

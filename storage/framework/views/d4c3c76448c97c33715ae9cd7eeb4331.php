@@ -171,46 +171,93 @@
             </div>
 
             <!-- Applications Section -->
-            <div class="bg-white rounded-lg border border-gray-200 p-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Applications</h2>
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                    <h2 class="text-3xl font-bold text-white mb-1">Recent Applications</h2>
+                    <p class="text-blue-100">Track your job application status</p>
+                </div>
 
                 <?php if($applications->count() > 0): ?>
-                    <div class="space-y-4">
+                    <div class="divide-y divide-gray-200">
                         <?php $__currentLoopData = $applications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $app): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <div class="flex items-start justify-between p-6 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition">
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-bold text-gray-900"><?php echo e($app->job->title); ?></h3>
-                                    <?php if($app->job->company): ?>
-                                        <p class="text-gray-600 mb-2"><?php echo e($app->job->company->name); ?></p>
-                                    <?php endif; ?>
-                                    <p class="text-sm text-gray-600">Applied <?php echo e($app->created_at->diffForHumans()); ?></p>
-                                </div>
-                                <div class="flex-shrink-0 text-right">
-                                    <span class="inline-block px-4 py-2 rounded-full font-semibold text-sm <?php switch($app->status ?? 'pending'):
-                                        case ('pending'): ?>
-                                            bg-yellow-100 text-yellow-800
-                                            <?php break; ?>
-                                        <?php case ('reviewed'): ?>
-                                            bg-blue-100 text-blue-800
-                                            <?php break; ?>
-                                        <?php case ('accepted'): ?>
-                                            bg-green-100 text-green-800
-                                            <?php break; ?>
-                                        <?php case ('rejected'): ?>
-                                            bg-red-100 text-red-800
-                                            <?php break; ?>
-                                        <?php default: ?>
-                                            bg-gray-100 text-gray-800
-                                    <?php endswitch; ?>">
-                                        <?php if($app->status === 'accepted'): ?>
-                                            Approved
+                            <a href="<?php echo e(route('jobs.show', $app->job->id)); ?>" class="block hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center justify-between p-6 gap-4">
+                                    <!-- Left: Company Logo & Info -->
+                                    <div class="flex items-start gap-4 flex-1 min-w-0">
+                                        <?php if($app->job->company && $app->job->company->logo_path): ?>
+                                            <?php
+                                                $logoUrl = null;
+                                                if (filter_var($app->job->company->logo_path, FILTER_VALIDATE_URL)) {
+                                                    $logoUrl = $app->job->company->logo_path;
+                                                } elseif (str_starts_with($app->job->company->logo_path, 'logos/')) {
+                                                    $logoUrl = asset($app->job->company->logo_path);
+                                                } else {
+                                                    $logoUrl = asset('storage/' . $app->job->company->logo_path);
+                                                }
+                                            ?>
+                                            <img src="<?php echo e($logoUrl); ?>" alt="<?php echo e($app->job->company->name); ?>" class="w-16 h-16 rounded-lg object-cover border border-gray-200 flex-shrink-0">
                                         <?php else: ?>
-                                            <?php echo e(ucfirst($app->status ?? 'pending')); ?>
+                                            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg border border-gray-200 flex-shrink-0">
+                                                <?php echo e(substr($app->job->company->name ?? 'J', 0, 1)); ?>
 
+                                            </div>
                                         <?php endif; ?>
-                                    </span>
+                                        
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class="text-lg font-bold text-gray-900 truncate"><?php echo e($app->job->title); ?></h3>
+                                            <?php if($app->job->company): ?>
+                                                <p class="text-gray-600 font-medium text-sm truncate"><?php echo e($app->job->company->name); ?></p>
+                                            <?php endif; ?>
+                                            <div class="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"></path>
+                                                </svg>
+                                                <span>Applied <?php echo e($app->created_at->diffForHumans()); ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right: Status Badge & Arrow -->
+                                    <div class="flex items-center gap-4 flex-shrink-0">
+                                        <span class="inline-block px-4 py-2 rounded-full font-semibold text-sm whitespace-nowrap <?php switch($app->status ?? 'pending'):
+                                            case ('pending'): ?>
+                                                bg-yellow-100 text-yellow-800
+                                                <?php break; ?>
+                                            <?php case ('reviewed'): ?>
+                                                bg-blue-100 text-blue-800
+                                                <?php break; ?>
+                                            <?php case ('accepted'): ?>
+                                                bg-green-100 text-green-800
+                                                <?php break; ?>
+                                            <?php case ('rejected'): ?>
+                                                bg-red-100 text-red-800
+                                                <?php break; ?>
+                                            <?php default: ?>
+                                                bg-gray-100 text-gray-800
+                                        <?php endswitch; ?>">
+                                            <?php switch($app->status ?? 'pending'):
+                                                case ('pending'): ?>
+                                                    ⏳ Pending
+                                                    <?php break; ?>
+                                                <?php case ('reviewed'): ?>
+                                                    👀 Reviewed
+                                                    <?php break; ?>
+                                                <?php case ('accepted'): ?>
+                                                    ✅ Approved
+                                                    <?php break; ?>
+                                                <?php case ('rejected'): ?>
+                                                    ❌ Rejected
+                                                    <?php break; ?>
+                                                <?php default: ?>
+                                                    Pending
+                                            <?php endswitch; ?>
+                                        </span>
+                                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 <?php else: ?>

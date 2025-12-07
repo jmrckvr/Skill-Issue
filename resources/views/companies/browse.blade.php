@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Companies - JobStreet</title>
+    <title>Browse Companies - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-white">
@@ -71,7 +71,7 @@
                                     @php
                                         $logoUrl = null;
                                         if ($company->logo_path) {
-                                            if (str_starts_with($company->logo_path, 'http')) {
+                                            if (filter_var($company->logo_path, FILTER_VALIDATE_URL)) {
                                                 $logoUrl = $company->logo_path;
                                             } elseif (str_starts_with($company->logo_path, 'logos/')) {
                                                 $logoUrl = asset($company->logo_path);

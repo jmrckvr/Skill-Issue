@@ -59,15 +59,27 @@
                     @if($applications && $applications->count() > 0)
                         <div class="space-y-4">
                             @foreach($applications as $app)
-                                <div class="applicationCard bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-300 hover:shadow-md transition" 
-                                     data-status="{{ $app->status ?? 'pending' }}">
-                                    <div class="flex items-start justify-between gap-4">
+                                <a href="{{ route('jobs.show', $app->job->id) }}" class="block">
+                                    <div class="applicationCard bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-300 hover:shadow-md transition cursor-pointer" 
+                                         data-status="{{ $app->status ?? 'pending' }}">
+                                        <div class="flex items-start justify-between gap-4">
                                         <div class="flex-1">
                                             <div class="flex items-start gap-4 mb-3">
                                                 @if($app->job->company && $app->job->company->logo_path)
-                                                    <img src="{{ asset('storage/' . $app->job->company->logo_path) }}" 
+                                                    @php
+                                                        $logoUrl = null;
+                                                        if (filter_var($app->job->company->logo_path, FILTER_VALIDATE_URL)) {
+                                                            $logoUrl = $app->job->company->logo_path;
+                                                        } elseif (str_starts_with($app->job->company->logo_path, 'logos/')) {
+                                                            $logoUrl = asset($app->job->company->logo_path);
+                                                        } else {
+                                                            $logoUrl = asset('storage/' . $app->job->company->logo_path);
+                                                        }
+                                                    @endphp
+                                                    <img src="{{ $logoUrl }}" 
                                                          alt="{{ $app->job->company->name }}"
-                                                         class="w-12 h-12 rounded-lg object-cover border border-gray-200">
+                                                         class="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                                                         loading="lazy" decoding="async">
                                                 @else
                                                     <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold border border-gray-200">
                                                         {{ substr($app->job->company->name ?? 'J', 0, 1) }}
@@ -136,6 +148,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             @endforeach
                         </div>
                     @else

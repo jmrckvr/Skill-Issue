@@ -3,39 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply for {{ $job->title }} - JobStreet</title>
+    <title>Apply for {{ $job->title }} - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
     @include('components.navbar')
 
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Back Button -->
-        <a href="{{ route('jobs.show', $job) }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold mb-6 inline-block">← Back to Job</a>
-
-        <div class="bg-white rounded-lg shadow-lg p-8">
-            <!-- Job Header -->
-            <div class="border-b border-gray-200 pb-6 mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Apply for this job</h1>
-                <h2 class="text-2xl font-semibold text-gray-700 mb-2">{{ $job->title }}</h2>
-                <p class="text-lg text-gray-600">{{ $job->company->name }} • {{ $job->location }}</p>
-                
-                <div class="mt-4 flex flex-wrap gap-3">
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                        {{ ucfirst(str_replace('-', ' ', $job->job_type)) }}
-                    </span>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                        {{ ucfirst($job->experience_level) }}
-                    </span>
-                    @if($job->category)
-                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            {{ $job->category->name }}
-                        </span>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Job Header Card -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <div class="flex items-start gap-6">
+                <!-- Company Logo -->
+                <div class="flex-shrink-0">
+                    @if($job->company->logo_path)
+                        @if(filter_var($job->company->logo_path, FILTER_VALIDATE_URL))
+                            <img src="{{ $job->company->logo_path }}" alt="{{ $job->company->name }}" 
+                                class="w-20 h-20 rounded-lg object-cover">
+                        @else
+                            <img src="{{ asset('storage/' . $job->company->logo_path) }}" alt="{{ $job->company->name }}" 
+                                class="w-20 h-20 rounded-lg object-cover">
+                        @endif
+                    @else
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-2xl">{{ substr($job->company->name, 0, 1) }}</span>
+                        </div>
                     @endif
                 </div>
-            </div>
 
-            <!-- Application Form -->
+                <!-- Job Info -->
+                <div class="flex-1">
+                    <p class="text-sm text-gray-600 mb-2">Applying for</p>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ $job->title }}</h1>
+                    <p class="text-gray-600 mb-4">{{ $job->company->name }}</p>
+                    <a href="{{ route('jobs.show', $job) }}" class="text-blue-600 hover:text-blue-800 underline text-sm font-medium">View job description</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Form -->
+        <div class="bg-white rounded-lg shadow p-8">
             <form action="{{ route('applications.store', $job) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
@@ -162,65 +168,6 @@
                     </a>
                 </div>
             </form>
-        </div>
-
-        <!-- Job Details Sidebar -->
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2">
-                <!-- Additional Job Info -->
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Job Overview</h3>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        <div>
-                            <p class="text-xs text-gray-600 font-semibold uppercase">📍 Location</p>
-                            <p class="font-bold text-gray-900 mt-1">{{ $job->location }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-600 font-semibold uppercase">💰 Salary</p>
-                            <p class="font-bold text-green-600 mt-1">{{ $job->getFormattedSalary() }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-600 font-semibold uppercase">📅 Posted</p>
-                            <p class="font-bold text-gray-900 mt-1">{{ $job->published_at->format('M d, Y') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Company Info -->
-            <div>
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">About Company</h3>
-                    
-                    @if($job->company->logo_path)
-                        <img src="{{ asset('storage/' . $job->company->logo_path) }}" alt="{{ $job->company->name }}" 
-                            class="w-full h-32 rounded-lg object-cover mb-4">
-                    @else
-                        <div class="w-full h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg mb-4 flex items-center justify-center">
-                            <span class="text-white font-bold text-4xl">{{ substr($job->company->name, 0, 1) }}</span>
-                        </div>
-                    @endif
-
-                    <h4 class="text-base font-bold text-gray-900 mb-3">{{ $job->company->name }}</h4>
-
-                    @if($job->company->description)
-                        <p class="text-gray-600 text-sm mb-4">{{ $job->company->description }}</p>
-                    @endif
-
-                    <div class="space-y-2 text-sm text-gray-600">
-                        @if($job->company->industry)
-                            <p><span class="font-semibold">Industry:</span> {{ $job->company->industry }}</p>
-                        @endif
-                        @if($job->company->employee_count)
-                            <p><span class="font-semibold">Size:</span> {{ $job->company->employee_count }} employees</p>
-                        @endif
-                        @if($job->company->website)
-                            <p><span class="font-semibold">Website:</span> <a href="{{ $job->company->website }}" target="_blank" class="text-blue-600 hover:text-blue-800">Visit</a></p>
-                        @endif
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

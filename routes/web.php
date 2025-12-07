@@ -30,7 +30,7 @@ Route::get('/community/{communityThread}', [CommunityThreadController::class, 's
 // Authenticated routes
 Route::middleware('auth', 'verified')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return redirect('/');
     })->name('dashboard');
 
     // Profile routes - all authenticated users

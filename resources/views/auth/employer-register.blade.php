@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employer Registration - JobStreet</title>
+    <title>Employer Registration - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
@@ -12,7 +12,7 @@
             <!-- Header -->
             <div class="text-center mb-8">
                 <a href="{{ route('home') }}" class="inline-block">
-                    <div class="text-3xl font-bold text-blue-600">JobStreet</div>
+                    <div class="text-3xl font-bold text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Skill Issue</div>
                     <p class="text-gray-600 text-sm mt-1">Employer Registration</p>
                 </a>
             </div>

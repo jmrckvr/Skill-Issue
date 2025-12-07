@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - JobStreet</title>
+    <title>Admin Dashboard - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
@@ -91,26 +91,59 @@
         </div>
 
         <!-- Admin Navigation -->
-        <div class="bg-white rounded-lg shadow mb-8">
-            <div class="p-6 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-900">Management Tools</h2>
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg mb-8">
+            <div class="p-8">
+                <h2 class="text-3xl font-bold text-white mb-2">Management Tools</h2>
+                <p class="text-blue-100">Core admin functions to manage your platform</p>
             </div>
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <a href="{{ route('admin.users') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                    <p class="font-medium text-gray-900">Manage Users</p>
-                    <p class="text-sm text-gray-600 mt-1">View, search, and deactivate users</p>
+            <div class="bg-blue-50 px-8 py-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="{{ route('admin.users') }}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition p-6 border-l-8 border-blue-600 hover:border-blue-700">
+                    <div class="flex items-center mb-3">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-2xl font-bold text-blue-600">👥</span>
+                    </div>
+                    <p class="font-bold text-gray-900 text-lg">Manage Users</p>
+                    <p class="text-sm text-gray-600 mt-2">View, search, and deactivate users</p>
                 </a>
-                <a href="{{ route('admin.jobs') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                    <p class="font-medium text-gray-900">Manage Jobs</p>
-                    <p class="text-sm text-gray-600 mt-1">Review, restore, or delete job listings</p>
+                <a href="{{ route('admin.jobs') }}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition p-6 border-l-8 border-green-600 hover:border-green-700">
+                    <div class="flex items-center mb-3">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-2xl font-bold text-green-600">💼</span>
+                    </div>
+                    <p class="font-bold text-gray-900 text-lg">Manage Jobs</p>
+                    <p class="text-sm text-gray-600 mt-2">Review, restore, or delete job listings</p>
                 </a>
-                <a href="{{ route('admin.categories') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                    <p class="font-medium text-gray-900">Categories</p>
-                    <p class="text-sm text-gray-600 mt-1">Add, edit, or remove job categories</p>
+                <a href="{{ route('admin.categories') }}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition p-6 border-l-8 border-purple-600 hover:border-purple-700">
+                    <div class="flex items-center mb-3">
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M7 3a1 1 0 000 2h6a1 1 0 000-2H7zM4 7a1 1 0 011-1h10a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1V7zM2 13a1 1 0 011-1h14a1 1 0 011 1v3a1 1 0 01-1 1H3a1 1 0 01-1-1v-3z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-2xl font-bold text-purple-600">📁</span>
+                    </div>
+                    <p class="font-bold text-gray-900 text-lg">Categories</p>
+                    <p class="text-sm text-gray-600 mt-2">Add, edit, or remove job categories</p>
                 </a>
-                <a href="{{ route('admin.categories.create') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                    <p class="font-medium text-gray-900">New Category</p>
-                    <p class="text-sm text-gray-600 mt-1">Create a new job category</p>
+                <a href="{{ route('admin.categories.create') }}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition p-6 border-l-8 border-orange-600 hover:border-orange-700">
+                    <div class="flex items-center mb-3">
+                        <div class="p-3 bg-orange-100 rounded-lg">
+                            <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-2xl font-bold text-orange-600">➕</span>
+                    </div>
+                    <p class="font-bold text-gray-900 text-lg">New Category</p>
+                    <p class="text-sm text-gray-600 mt-2">Create a new job category</p>
                 </a>
             </div>
         </div>

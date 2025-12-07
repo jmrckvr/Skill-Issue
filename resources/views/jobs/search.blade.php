@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Search - JobStreet</title>
+    <title>Job Search - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
@@ -192,12 +192,24 @@
     </div>
 
     <script>
+        console.log('Search page loaded, initializing job cards...');
+        
         // Initialize job card click handlers when DOM is ready
         function initJobCards() {
-            document.querySelectorAll('.job-card').forEach(card => {
+            console.log('initJobCards called');
+            const cards = document.querySelectorAll('.job-card');
+            console.log(`Found ${cards.length} job cards`);
+            
+            if (cards.length === 0) {
+                console.warn('No job cards found! Checking if sidebar exists:', !!document.getElementById('jobDetailSidebar'));
+            }
+            
+            cards.forEach((card, index) => {
+                console.log(`Attaching click handler to job card ${index + 1}`);
                 card.addEventListener('click', function(e) {
                     e.preventDefault();
                     const jobId = this.getAttribute('data-job-id');
+                    console.log('Job card clicked! Job ID:', jobId);
                     
                     // Highlight the selected job
                     document.querySelectorAll('.job-card').forEach(c => {
@@ -208,15 +220,22 @@
                     this.classList.remove('border-transparent');
 
                     // Open the sidebar
-                    openJobDetailSidebar(jobId);
+                    console.log('Calling openJobDetailSidebar with jobId:', jobId);
+                    if (typeof openJobDetailSidebar === 'function') {
+                        openJobDetailSidebar(jobId);
+                    } else {
+                        console.error('openJobDetailSidebar function not found!');
+                    }
                 });
             });
         }
 
         // Run when DOM is ready
         if (document.readyState === 'loading') {
+            console.log('DOM still loading, waiting for DOMContentLoaded');
             document.addEventListener('DOMContentLoaded', initJobCards);
         } else {
+            console.log('DOM already loaded, initializing immediately');
             initJobCards();
         }
     </script>
