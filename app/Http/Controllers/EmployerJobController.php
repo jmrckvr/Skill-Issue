@@ -233,10 +233,10 @@ class EmployerJobController extends Controller
     {
         $this->authorize('viewApplicants', $job);
 
-        if (!$application->user->resume) {
+        if (!$application->resume_path) {
             return back()->with('error', 'No resume found for this applicant.');
         }
 
-        return response()->download(storage_path('app/public/' . $application->user->resume));
+        return response()->download(storage_path('app/public/' . $application->resume_path));
     }
 }

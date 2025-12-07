@@ -63,11 +63,11 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Phone</p>
-                            <p class="text-gray-900 font-medium text-sm">{{ $application->applicant_phone ?? 'Not provided' }}</p>
+                            <p class="text-gray-900 font-medium text-sm">{{ $application->applicant_phone ?? $application->user->contact_number ?? 'Not provided' }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Location</p>
-                            <p class="text-gray-900 font-medium text-sm">{{ $application->applicant_location ?? '-' }}</p>
+                            <p class="text-gray-900 font-medium text-sm">{{ $application->applicant_location ?? $application->user->location ?? '-' }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Status</p>
@@ -77,25 +77,40 @@
                 </div>
 
                 <!-- Applicant Skills & Bio -->
-                @if($application->applicant_skills || $application->applicant_bio)
+                @if($application->applicant_skills || $application->applicant_bio || $application->user->skills || $application->user->bio)
                     <div class="bg-white rounded-lg shadow p-6">
-                        @if($application->applicant_skills)
+                        @if($application->applicant_skills || $application->user->skills)
                             <div class="mb-6">
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">Skills</h3>
                                 <div class="flex flex-wrap gap-2">
-                                    @foreach(explode(',', $application->applicant_skills) as $skill)
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                            {{ trim($skill) }}
-                                        </span>
-                                    @endforeach
+                                    @php
+                                        $skills = $application->applicant_skills ?? $application->user->skills;
+                                        $skillList = $skills ? explode(',', $skills) : [];
+                                    @endphp
+                                    @if(count($skillList) > 0)
+                                        @foreach($skillList as $skill)
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                                {{ trim($skill) }}
+                                            </span>
+                                        @endforeach
+                                    @else
+                                        <p class="text-gray-600 text-sm">No skills provided</p>
+                                    @endif
                                 </div>
                             </div>
                         @endif
 
-                        @if($application->applicant_bio)
+                        @if($application->applicant_bio || $application->user->bio)
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">About</h3>
-                                <p class="text-gray-700 leading-relaxed">{{ $application->applicant_bio }}</p>
+                                @php
+                                    $bio = $application->applicant_bio ?? $application->user->bio;
+                                @endphp
+                                @if($bio)
+                                    <p class="text-gray-700 leading-relaxed">{{ $bio }}</p>
+                                @else
+                                    <p class="text-gray-600 text-sm">No bio provided</p>
+                                @endif
                             </div>
                         @endif
                     </div>
