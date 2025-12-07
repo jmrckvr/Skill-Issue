@@ -172,7 +172,7 @@ class ApplicantProfileController extends Controller
         }
 
         // Get user's saved jobs (using the job_saves relationship)
-        $savedJobs = $user->savedJobs()->with('company')->latest()->get();
+        $savedJobs = $user->savedJobs()->with('job.company')->latest()->get();
         $applications = $user->jobApplications()->with('job', 'job.company')->latest()->get();
 
         return view('applicant.saved-jobs', [
