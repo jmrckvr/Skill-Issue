@@ -78,18 +78,15 @@
 
             <!-- Action Buttons -->
             <div class="space-y-3 mb-6 pb-6 border-b border-gray-200">
-                <button type="button" id="applyBtn" class="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                <button type="button" id="applyBtn" onclick="handleApplyClick()" class="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition duration-200 flex items-center justify-center gap-2">
                     <span>📝</span>
                     <span>Quick Apply</span>
                 </button>
                 
-                <form id="saveJobForm" method="POST" class="w-full">
-                    @csrf
-                    <button type="submit" id="saveBtn" class="w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                        <span id="saveBtnIcon">☆</span>
-                        <span id="saveBtnText">Save Job</span>
-                    </button>
-                </form>
+                <button type="button" id="saveBtn" onclick="handleSaveClick()" class="w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                    <span id="saveBtnIcon">☆</span>
+                    <span id="saveBtnText">Save Job</span>
+                </button>
             </div>
 
             <!-- Job Description Section -->
@@ -337,16 +334,8 @@
                 saveBtnText.textContent = 'Save Job';
             }
 
-            // Handle authentication for apply button
-            const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
-            const applyBtn = document.getElementById('applyBtn');
-            
-            if (!isLoggedIn) {
-                applyBtn.onclick = function() {
-                    window.location.href = '/login';
-                };
-                applyBtn.innerHTML = '<span>🔓</span><span>Login to Apply</span>';
-            }
+            // Store job ID for button handlers
+            currentJobId = job.id;
             
         } catch (error) {
             console.error('Error in populateJobDetails:', error);
@@ -354,102 +343,80 @@
         }
     }
 
-    // Handle apply button click with event listener
-    document.addEventListener('DOMContentLoaded', function() {
-        const applyBtn = document.getElementById('applyBtn');
-        if (applyBtn) {
-            applyBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Apply button clicked, currentJobId:', currentJobId);
-                if (currentJobId) {
-                    console.log('Navigating to /jobs/' + currentJobId + '/apply');
-                    // Navigate to apply page - will show job details and form
-                    window.location.href = '/jobs/' + currentJobId + '/apply';
-                } else {
-                    console.error('currentJobId is null!');
-                    alert('Error: Job ID not found. Please try clicking on the job again.');
-                }
-            });
+    // Handle Apply button click
+    function handleApplyClick() {
+        const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+        if (!isLoggedIn) {
+            window.location.href = '/login';
+        } else {
+            // Navigate to apply page
+            window.location.href = '/jobs/' + currentJobId + '/apply';
         }
-    });
+    }
+
+    // Handle Save button click
+    function handleSaveClick() {
+        const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+        if (!isLoggedIn) {
+            window.location.href = '/login';
+            return;
+        }
+
+        const jobId = currentJobId;
+        if (!jobId) {
+            alert('Error: Job ID not found. Please try again.');
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const saveBtn = document.getElementById('saveBtn');
+        const saveBtnIcon = document.getElementById('saveBtnIcon');
+        const saveBtnText = document.getElementById('saveBtnText');
+        const isSaved = saveBtnIcon.textContent === '★';
+        const method = isSaved ? 'DELETE' : 'POST';
+
+        // Send save/unsave request
+        fetch(`/api/jobs/${jobId}/save`, {
+            method: method,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Save job response:', data);
+            if (data.success) {
+                const newSavedState = !isSaved;
+                if (newSavedState) {
+                    saveBtn.classList.add('bg-yellow-400', 'hover:bg-yellow-500');
+                    saveBtn.classList.remove('bg-gray-100', 'hover:bg-gray-200');
+                    saveBtnIcon.textContent = '★';
+                    saveBtnText.textContent = 'Saved';
+                } else {
+                    saveBtn.classList.remove('bg-yellow-400', 'hover:bg-yellow-500');
+                    saveBtn.classList.add('bg-gray-100', 'hover:bg-gray-200');
+                    saveBtnIcon.textContent = '☆';
+                    saveBtnText.textContent = 'Save Job';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error saving job:', error);
+            alert('Error saving job. Please try again.');
+        });
+    }
 
     // Close sidebar when pressing Escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeJobDetailSidebar();
-        }
-    });
-
-    // Handle save job form submission
-    document.addEventListener('DOMContentLoaded', function() {
-        const saveJobForm = document.getElementById('saveJobForm');
-        if (saveJobForm) {
-            saveJobForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-                const jobId = currentJobId;
-                
-                console.log('Saving job ID:', jobId);
-                
-                if (!jobId) {
-                    alert('Error: Job ID not found. Please try again.');
-                    return;
-                }
-                
-                // Send POST request to save job
-                fetch(`/jobs/${jobId}/save`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Save job response:', data);
-                    if (data.success) {
-                        // Update button state
-                        const saveBtn = document.getElementById('saveBtn');
-                        const saveBtnIcon = document.getElementById('saveBtnIcon');
-                        const saveBtnText = document.getElementById('saveBtnText');
-                        
-                        if (data.saved) {
-                            // Job was saved
-                            saveBtn.classList.add('bg-yellow-400', 'hover:bg-yellow-500');
-                            saveBtn.classList.remove('bg-gray-100', 'hover:bg-gray-200');
-                            saveBtnIcon.textContent = '★';
-                            saveBtnText.textContent = 'Saved';
-                        } else {
-                            // Job was removed from saved
-                            saveBtn.classList.remove('bg-yellow-400', 'hover:bg-yellow-500');
-                            saveBtn.classList.add('bg-gray-100', 'hover:bg-gray-200');
-                            saveBtnIcon.textContent = '☆';
-                            saveBtnText.textContent = 'Save Job';
-                        }
-                    } else if (data.error) {
-                        // Handle error response
-                        if (data.error.includes('login')) {
-                            alert('Please log in to save jobs');
-                        } else {
-                            alert('Error: ' + data.error);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error saving job:', error);
-                    alert('Error saving job. Please try again.');
-                });
-            });
         }
     });
 </script>

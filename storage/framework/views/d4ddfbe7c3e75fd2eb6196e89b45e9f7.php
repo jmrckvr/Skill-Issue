@@ -174,7 +174,9 @@
 
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-200">
                                     <span class="text-green-600 font-bold text-lg"><?php echo e($job->getFormattedSalary()); ?></span>
-                                    <span class="text-gray-500 text-xs"><?php echo e($job->application_count); ?> applications</span>
+                                    <button type="button" class="save-job-btn" onclick="toggleSaveJobSearch(event, <?php echo e($job->id); ?>)" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 0; transition: transform 0.2s; color: #6b7280;" title="Save job">
+                                        <span class="save-icon">☆</span>
+                                    </button>
                                 </div>
                             </a>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -193,12 +195,28 @@
     </div>
 
     <script>
+        console.log('Search page loaded, initializing job cards...');
+        
         // Initialize job card click handlers when DOM is ready
         function initJobCards() {
-            document.querySelectorAll('.job-card').forEach(card => {
+            console.log('initJobCards called');
+            const cards = document.querySelectorAll('.job-card');
+            console.log(`Found ${cards.length} job cards`);
+            
+            if (cards.length === 0) {
+                console.warn('No job cards found! Checking if sidebar exists:', !!document.getElementById('jobDetailSidebar'));
+            }
+            
+            cards.forEach((card, index) => {
+                console.log(`Attaching click handler to job card ${index + 1}`);
                 card.addEventListener('click', function(e) {
+                    // Don't trigger sidebar if clicking the save button
+                    if (e.target.closest('.save-job-btn')) {
+                        return;
+                    }
                     e.preventDefault();
                     const jobId = this.getAttribute('data-job-id');
+                    console.log('Job card clicked! Job ID:', jobId);
                     
                     // Highlight the selected job
                     document.querySelectorAll('.job-card').forEach(c => {
@@ -209,15 +227,61 @@
                     this.classList.remove('border-transparent');
 
                     // Open the sidebar
-                    openJobDetailSidebar(jobId);
+                    console.log('Calling openJobDetailSidebar with jobId:', jobId);
+                    if (typeof openJobDetailSidebar === 'function') {
+                        openJobDetailSidebar(jobId);
+                    } else {
+                        console.error('openJobDetailSidebar function not found!');
+                    }
                 });
+            });
+        }
+
+        // Handle save job from search page
+        function toggleSaveJobSearch(e, jobId) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const btn = e.currentTarget;
+            const icon = btn.querySelector('.save-icon');
+            const isSaved = icon.textContent === '★';
+            const method = isSaved ? 'DELETE' : 'POST';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(`/api/jobs/${jobId}/save`, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const newSavedState = !isSaved;
+                    icon.textContent = newSavedState ? '★' : '☆';
+                    btn.style.color = newSavedState ? '#fbbf24' : '#6b7280';
+                    btn.title = newSavedState ? 'Saved' : 'Save job';
+                } else if (data.error && data.error.includes('login')) {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save job. Please try again.');
             });
         }
 
         // Run when DOM is ready
         if (document.readyState === 'loading') {
+            console.log('DOM still loading, waiting for DOMContentLoaded');
             document.addEventListener('DOMContentLoaded', initJobCards);
         } else {
+            console.log('DOM already loaded, initializing immediately');
             initJobCards();
         }
     </script>
