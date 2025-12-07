@@ -368,7 +368,13 @@
             return;
         }
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfTokenElement) {
+            alert('Error: Security token not found. Please refresh the page.');
+            return;
+        }
+        
+        const csrfToken = csrfTokenElement.content;
         const saveBtn = document.getElementById('saveBtn');
         const saveBtnIcon = document.getElementById('saveBtnIcon');
         const saveBtnText = document.getElementById('saveBtnText');
