@@ -173,7 +173,9 @@
 
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-200">
                                     <span class="text-green-600 font-bold text-lg">{{ $job->getFormattedSalary() }}</span>
-                                    <span class="text-gray-500 text-xs">{{ $job->application_count }} applications</span>
+                                    <button type="button" class="save-job-btn" onclick="toggleSaveJobSearch(event, {{ $job->id }})" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 0; transition: transform 0.2s; color: #6b7280;" title="Save job">
+                                        <span class="save-icon">☆</span>
+                                    </button>
                                 </div>
                             </a>
                         @endforeach
@@ -207,6 +209,10 @@
             cards.forEach((card, index) => {
                 console.log(`Attaching click handler to job card ${index + 1}`);
                 card.addEventListener('click', function(e) {
+                    // Don't trigger sidebar if clicking the save button
+                    if (e.target.closest('.save-job-btn')) {
+                        return;
+                    }
                     e.preventDefault();
                     const jobId = this.getAttribute('data-job-id');
                     console.log('Job card clicked! Job ID:', jobId);
@@ -227,6 +233,45 @@
                         console.error('openJobDetailSidebar function not found!');
                     }
                 });
+            });
+        }
+
+        // Handle save job from search page
+        function toggleSaveJobSearch(e, jobId) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const btn = e.currentTarget;
+            const icon = btn.querySelector('.save-icon');
+            const isSaved = icon.textContent === '★';
+            const method = isSaved ? 'DELETE' : 'POST';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(`/api/jobs/${jobId}/save`, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const newSavedState = !isSaved;
+                    icon.textContent = newSavedState ? '★' : '☆';
+                    btn.style.color = newSavedState ? '#fbbf24' : '#6b7280';
+                    btn.title = newSavedState ? 'Saved' : 'Save job';
+                } else if (data.error && data.error.includes('login')) {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save job. Please try again.');
             });
         }
 

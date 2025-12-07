@@ -126,6 +126,11 @@ unset($__defined_vars, $__key, $__value); ?>
             📅 <?php echo e($job->published_at->diffForHumans()); ?>
 
         </span>
+        <?php if($sidebar): ?>
+            <button type="button" class="save-job-btn" onclick="toggleSaveJobHome(event, <?php echo e($job->id); ?>)" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 0; transition: transform 0.2s;">
+                <span class="save-icon">☆</span>
+            </button>
+        <?php endif; ?>
     </div>
 </div>
 <?php /**PATH C:\Users\jmrck\Project Folder\Skill1ssue\jobstreet\resources\views/components/cards/job-card.blade.php ENDPATH**/ ?>

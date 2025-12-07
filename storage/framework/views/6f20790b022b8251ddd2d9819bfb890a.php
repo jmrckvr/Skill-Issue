@@ -207,10 +207,53 @@
                 const jobId = link.getAttribute('data-job-id');
                 
                 link.addEventListener('click', function(e) {
+                    // Don't trigger sidebar if clicking the save button
+                    if (e.target.closest('.save-job-btn')) {
+                        return;
+                    }
                     e.preventDefault();
                     e.stopPropagation();
                     openJobDetailSidebar(jobId);
                 });
+            });
+        }
+
+        // Handle save job from home page
+        function toggleSaveJobHome(e, jobId) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const btn = e.currentTarget;
+            const icon = btn.querySelector('.save-icon');
+            const isSaved = icon.textContent === '★';
+            const method = isSaved ? 'DELETE' : 'POST';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(`/api/jobs/${jobId}/save`, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const newSavedState = !isSaved;
+                    icon.textContent = newSavedState ? '★' : '☆';
+                    btn.style.color = newSavedState ? '#fbbf24' : '#6b7280';
+                    btn.title = newSavedState ? 'Saved' : 'Save job';
+                } else if (data.error && data.error.includes('login')) {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save job. Please try again.');
             });
         }
 

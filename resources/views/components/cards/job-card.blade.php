@@ -92,5 +92,10 @@
         <span class="text-xs text-gray-500">
             📅 {{ $job->published_at->diffForHumans() }}
         </span>
+        @if($sidebar)
+            <button type="button" class="save-job-btn" onclick="toggleSaveJobHome(event, {{ $job->id }})" style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 0; transition: transform 0.2s;">
+                <span class="save-icon">☆</span>
+            </button>
+        @endif
     </div>
 </div>
