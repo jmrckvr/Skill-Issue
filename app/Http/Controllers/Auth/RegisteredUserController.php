@@ -40,6 +40,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'applicant', // Sign-In registration always creates Applicant accounts
         ]);
 
         event(new Registered($user));

@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Job;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class JobController extends Controller
 {
+    use AuthorizesRequests;
+
+    /**
+     * Display a published job.
+     * Public - anyone can view published jobs.
+     */
     public function show($id)
     {
         $job = Job::published()
@@ -27,6 +34,10 @@ class JobController extends Controller
         return view('jobs.show', compact('job', 'relatedJobs', 'isSaved'));
     }
 
+    /**
+     * Get job details via API.
+     * Public - anyone can request.
+     */
     public function apiShow($id)
     {
         $job = Job::published()
@@ -55,6 +66,7 @@ class JobController extends Controller
                 'posted_at' => $job->published_at->diffForHumans(),
                 'requirements' => $job->requirements,
                 'benefits' => $job->benefits,
+                'logo' => $job->logo,
                 'is_saved' => $isSaved,
                 'company' => [
                     'id' => $job->company->id,
@@ -67,12 +79,20 @@ class JobController extends Controller
         ]);
     }
 
+    /**
+     * Show job creation form.
+     * Only employers can create jobs.
+     */
     public function create()
     {
         $categories = \App\Models\Category::all();
         return view('employer.job-form', compact('categories'));
     }
 
+    /**
+     * Store a new job.
+     * Only employers can create jobs.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -104,27 +124,31 @@ class JobController extends Controller
         return redirect()->route('jobs.edit', $job)->with('success', 'Job created successfully!');
     }
 
+    /**
+     * Show job edit form.
+     * Only the job owner (employer) or admin can edit.
+     */
     public function edit($id)
     {
         $job = Job::findOrFail($id);
 
-        // Verify the job belongs to the current user's company
-        if ($job->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        // Check authorization
+        $this->authorize('update', $job);
 
         $categories = \App\Models\Category::all();
         return view('employer.job-form', compact('job', 'categories'));
     }
 
+    /**
+     * Update a job.
+     * Only the job owner (employer) or admin can update.
+     */
     public function update(Request $request, $id)
     {
         $job = Job::findOrFail($id);
 
-        // Verify the job belongs to the current user's company
-        if ($job->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        // Check authorization
+        $this->authorize('update', $job);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -145,14 +169,16 @@ class JobController extends Controller
         return back()->with('success', 'Job updated successfully!');
     }
 
+    /**
+     * Publish a job.
+     * Only the job owner (employer) or admin can publish.
+     */
     public function publish($id)
     {
         $job = Job::findOrFail($id);
 
-        // Verify the job belongs to the current user's company
-        if ($job->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        // Check authorization
+        $this->authorize('publish', $job);
 
         if ($job->status == 'published') {
             return back()->with('info', 'Job is already published.');
@@ -166,14 +192,16 @@ class JobController extends Controller
         return back()->with('success', 'Job published successfully!');
     }
 
+    /**
+     * Close a job.
+     * Only the job owner (employer) or admin can close.
+     */
     public function close($id)
     {
         $job = Job::findOrFail($id);
 
-        // Verify the job belongs to the current user's company
-        if ($job->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        // Check authorization
+        $this->authorize('close', $job);
 
         $job->update([
             'status' => 'closed',
@@ -183,24 +211,47 @@ class JobController extends Controller
         return back()->with('success', 'Job closed successfully!');
     }
 
+    /**
+     * Delete a job (soft delete).
+     * Only the job owner (employer) or admin can delete.
+     */
     public function destroy($id)
     {
         $job = Job::findOrFail($id);
 
-        // Verify the job belongs to the current user's company
-        if ($job->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        // Check authorization
+        $this->authorize('delete', $job);
 
         $job->delete();
 
         return back()->with('success', 'Job deleted successfully!');
     }
 
+    /**
+     * Save or unsave a job.
+     * Only applicants can save jobs.
+     */
     public function saveJob(Request $request, $jobId)
     {
         if (!auth()->check()) {
+            if ($request->expectsJson() || $request->isJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Please login to save jobs.'
+                ], 401);
+            }
             return back()->with('error', 'Please login to save jobs.');
+        }
+
+        // Check if user can save jobs
+        if (!auth()->user()->canSaveJobs()) {
+            if ($request->expectsJson() || $request->isJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Only applicants can save jobs.'
+                ], 403);
+            }
+            return back()->with('error', 'Only applicants can save jobs.');
         }
 
         $user = auth()->user();
@@ -210,13 +261,29 @@ class JobController extends Controller
 
         if ($existing) {
             $existing->delete();
-            return back()->with('success', 'Job removed from saved jobs.');
+            $message = 'Job removed from saved jobs.';
+            $saved = false;
         } else {
             $user->savedJobs()->create(['job_id' => $jobId]);
-            return back()->with('success', 'Job saved successfully!');
+            $message = 'Job saved successfully!';
+            $saved = true;
         }
+
+        if ($request->expectsJson() || $request->isJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'saved' => $saved
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
+    /**
+     * Show employer dashboard.
+     * Only employers can access.
+     */
     public function dashboard()
     {
         $company = auth()->user()->company;
@@ -247,12 +314,14 @@ class JobController extends Controller
         return view('employer.dashboard', compact('jobs', 'activeJobs', 'totalApplications', 'pendingApplications'));
     }
 
+    /**
+     * Show applicants for a job.
+     * Only the job owner (employer) or admin can view.
+     */
     public function applicants(Job $job, Request $request)
     {
-        // Verify the job belongs to the current user's company
-        if ($job->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        // Check authorization
+        $this->authorize('viewApplicants', $job);
 
         $query = $job->applications()->with('user');
 

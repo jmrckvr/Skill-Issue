@@ -11,12 +11,13 @@ class AdminMiddleware
 {
     /**
      * Handle an incoming request.
+     * Admin middleware - requires admin role
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
             return redirect('/')->with('error', 'Unauthorized access. Admin privileges required.');
         }
 

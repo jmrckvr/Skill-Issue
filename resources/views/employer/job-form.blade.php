@@ -27,6 +27,37 @@
                     @method('PATCH')
                 @endif
 
+                <!-- Company Logo Preview -->
+                @if(auth()->user()->company)
+                    <div class="p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">{{ auth()->user()->company->name }}</h3>
+                                <p class="text-gray-600 text-sm">{{ auth()->user()->company->industry ?? 'Industry not specified' }}</p>
+                                <p class="text-gray-500 text-xs mt-2">{{ auth()->user()->company->city }}, {{ auth()->user()->company->country }}</p>
+                            </div>
+                            @php
+                                $companyLogoUrl = null;
+                                if (auth()->user()->company->logo_path) {
+                                    $companyLogoUrl = str_starts_with(auth()->user()->company->logo_path, 'http') ? auth()->user()->company->logo_path : asset('storage/' . auth()->user()->company->logo_path);
+                                }
+                            @endphp
+                            @if($companyLogoUrl)
+                                <img src="{{ $companyLogoUrl }}" 
+                                     alt="{{ auth()->user()->company->name }}"
+                                     class="w-20 h-20 rounded-lg object-cover ml-4 shadow-md" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Crect width=%2280%22 height=%2280%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
+                            @else
+                                <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center ml-4">
+                                    <span class="text-blue-600 font-bold text-2xl">{{ substr(auth()->user()->company->name, 0, 1) }}</span>
+                                </div>
+                            @endif
+                        </div>
+                        <a href="{{ route('company.edit', auth()->user()->company) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium mt-3 inline-block">
+                            Update company profile & logo →
+                        </a>
+                    </div>
+                @endif
+
                 <!-- Job Title -->
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700">Job Title <span class="text-red-500">*</span></label>

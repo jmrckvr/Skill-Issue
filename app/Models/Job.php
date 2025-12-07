@@ -24,6 +24,7 @@ class Job extends Model
         'hide_salary',
         'requirements',
         'benefits',
+        'logo',
         'status',
         'application_count',
         'published_at',

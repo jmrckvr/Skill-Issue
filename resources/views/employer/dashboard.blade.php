@@ -1,7 +1,15 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Dashboard - JobStreet</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50">
+    @include('components.navbar')
 
-@section('content')
-<div class="py-12">
+    <div class="py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
@@ -9,7 +17,7 @@
                 <h1 class="text-3xl font-bold text-gray-900">Employer Dashboard</h1>
                 <p class="text-gray-600 mt-2">Manage your company and job postings</p>
             </div>
-            <a href="{{ route('jobs.create') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+            <a href="{{ route('employer.jobs.create') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
                 Post New Job
             </a>
         </div>
@@ -99,7 +107,7 @@
                 <h2 class="text-xl font-bold text-gray-900">Your Job Postings</h2>
             </div>
 
-            @if($jobs->count() > 0)
+            @if($recentJobs->count() > 0)
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-gray-50 border-b border-gray-200">
@@ -112,10 +120,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($jobs as $job)
+                            @foreach($recentJobs as $job)
                                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <a href="{{ route('jobs.show', $job) }}" class="text-blue-600 hover:text-blue-700 font-medium">
+                                        <a href="{{ route('employer.jobs.show', $job) }}" class="text-blue-600 hover:text-blue-700 font-medium">
                                             {{ $job->title }}
                                         </a>
                                     </td>
@@ -143,24 +151,24 @@
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-2">
                                             @if($job->status === 'draft')
-                                                <form action="{{ route('jobs.publish', $job) }}" method="POST" class="inline">
+                                                <form action="{{ route('employer.jobs.publish', $job) }}" method="POST" class="inline">
                                                     @csrf
                                                     <button type="submit" class="text-green-600 hover:text-green-700 font-medium text-sm">
                                                         Publish
                                                     </button>
                                                 </form>
                                             @elseif($job->status === 'published')
-                                                <a href="{{ route('jobs.edit', $job) }}" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                                                <a href="{{ route('employer.jobs.edit', $job) }}" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
                                                     Edit
                                                 </a>
-                                                <form action="{{ route('jobs.close', $job) }}" method="POST" class="inline">
+                                                <form action="{{ route('employer.jobs.close', $job) }}" method="POST" class="inline">
                                                     @csrf
                                                     <button type="submit" class="text-yellow-600 hover:text-yellow-700 font-medium text-sm">
                                                         Close
                                                     </button>
                                                 </form>
                                             @endif
-                                            <a href="{{ route('jobs.applicants', $job) }}" class="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                                            <a href="{{ route('employer.jobs.applicants', $job) }}" class="text-purple-600 hover:text-purple-700 font-medium text-sm">
                                                 View Applicants
                                             </a>
                                         </div>
@@ -173,7 +181,7 @@
 
                 <!-- Pagination -->
                 <div class="px-6 py-4 border-t border-gray-200">
-                    {{ $jobs->links() }}
+                    {{ $recentJobs->links() }}
                 </div>
             @else
                 <div class="p-6 text-center">
@@ -182,7 +190,7 @@
                     </svg>
                     <h3 class="mt-2 text-lg font-medium text-gray-900">No jobs posted yet</h3>
                     <p class="mt-1 text-gray-600">Get started by posting your first job.</p>
-                    <a href="{{ route('jobs.create') }}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    <a href="{{ route('employer.jobs.create') }}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
                         Post a Job
                     </a>
                 </div>
@@ -190,4 +198,5 @@
         </div>
     </div>
 </div>
-@endsection
+</body>
+</html>

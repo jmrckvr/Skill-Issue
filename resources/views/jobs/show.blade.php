@@ -22,14 +22,30 @@
                             <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $job->title }}</h1>
                             <p class="text-gray-700 text-lg font-semibold mb-4">{{ $job->company->name }}</p>
                         </div>
-                        @if($job->company->logo_path)
-                            <img src="{{ asset('storage/' . $job->company->logo_path) }}" alt="{{ $job->company->name }}" 
-                                class="w-24 h-24 rounded object-cover ml-6">
-                        @else
-                            <div class="w-24 h-24 rounded bg-blue-100 flex items-center justify-center ml-6">
-                                <span class="text-blue-600 font-bold text-2xl">{{ substr($job->company->name, 0, 1) }}</span>
-                            </div>
-                        @endif
+                        <div class="flex gap-4 ml-6">
+                            @php
+                                $jobLogoUrl = null;
+                                if ($job->logo) {
+                                    $jobLogoUrl = str_starts_with($job->logo, 'http') ? $job->logo : asset('storage/' . $job->logo);
+                                }
+                                $companyLogoUrl = null;
+                                if ($job->company->logo_path) {
+                                    $companyLogoUrl = str_starts_with($job->company->logo_path, 'http') ? $job->company->logo_path : asset('storage/' . $job->company->logo_path);
+                                }
+                            @endphp
+                            @if($jobLogoUrl)
+                                <img src="{{ $jobLogoUrl }}" alt="{{ $job->title }} Logo" 
+                                    class="w-24 h-24 rounded object-cover" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22 viewBox=%220 0 96 96%22%3E%3Crect width=%2296%22 height=%2296%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
+                            @endif
+                            @if($companyLogoUrl)
+                                <img src="{{ $companyLogoUrl }}" alt="{{ $job->company->name }}" 
+                                    class="w-24 h-24 rounded object-cover" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22 viewBox=%220 0 96 96%22%3E%3Crect width=%2296%22 height=%2296%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
+                            @else
+                                <div class="w-24 h-24 rounded bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                                    <span class="text-blue-600 font-bold text-2xl">{{ substr($job->company->name, 0, 1) }}</span>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Tags -->
@@ -102,15 +118,12 @@
                 <!-- Apply Section -->
                 @auth
                     <div class="bg-white rounded-lg shadow p-6">
-                        <button onclick="showApplyModal()" style="background-color: #f53a6b; color: white; padding: 12px 16px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; transition: background-color 0.3s; margin-bottom: 12px; font-size: 15px;">
-                            Quick Apply
+                        <button type="button" onclick="window.location.href='{{ route('applications.apply', $job) }}'" style="display: block; background-color: #f53a6b; color: white; padding: 12px 16px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; transition: background-color 0.3s; margin-bottom: 12px; font-size: 15px; text-align: center;">
+                            Apply Now
                         </button>
-                        <form action="{{ route('jobs.save', $job) }}" method="POST">
-                            @csrf
-                            <button type="submit" style="background-color: {{ $isSaved ? '#f59e0b' : '#f3f4f6' }}; color: {{ $isSaved ? 'white' : '#1f2937' }}; padding: 12px 16px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; transition: all 0.3s;">
-                                {{ $isSaved ? '★ Saved' : '☆ Save Job' }}
-                            </button>
-                        </form>
+                        <button type="button" id="saveJobBtn" onclick="toggleSaveJob(event, {{ $job->id }})" style="background-color: {{ $isSaved ? '#f59e0b' : '#f3f4f6' }}; color: {{ $isSaved ? 'white' : '#1f2937' }}; padding: 12px 16px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; transition: all 0.3s;" data-saved="{{ $isSaved ? 'true' : 'false' }}">
+                            {{ $isSaved ? '★ Saved' : '☆ Save Job' }}
+                        </button>
                     </div>
                 @else
                     <div class="bg-white rounded-lg shadow p-6">
@@ -127,10 +140,16 @@
                 <!-- Company Info -->
                 <div class="bg-white rounded-lg shadow p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">About Company</h3>
+                    @php
+                        $companyLogoUrl = null;
+                        if ($job->company->logo_path) {
+                            $companyLogoUrl = str_starts_with($job->company->logo_path, 'http') ? $job->company->logo_path : asset('storage/' . $job->company->logo_path);
+                        }
+                    @endphp
                     
-                    @if($job->company->logo_path)
-                        <img src="{{ asset('storage/' . $job->company->logo_path) }}" alt="{{ $job->company->name }}" 
-                            class="w-full h-32 rounded-lg object-cover mb-4">
+                    @if($companyLogoUrl)
+                        <img src="{{ $companyLogoUrl }}" alt="{{ $job->company->name }}" 
+                            class="w-full h-32 rounded-lg object-cover mb-4" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22128%22 viewBox=%220 0 400 128%22%3E%3Crect width=%22400%22 height=%22128%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
                     @else
                         <div class="w-full h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg mb-4 flex items-center justify-center">
                             <span class="text-white font-bold text-4xl">{{ substr($job->company->name, 0, 1) }}</span>
@@ -182,58 +201,41 @@
         </div>
     </div>
 
-    <!-- Apply Modal -->
-    @auth
-        <div id="applyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg max-w-md w-full p-8 shadow-2xl">
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Apply for this job</h2>
-                <p class="text-gray-600 text-sm mb-6">{{ $job->title }} at {{ $job->company->name }}</p>
-                
-                <form action="{{ route('applications.store', $job) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-900 mb-2">Resume <span class="text-red-500">*</span></label>
-                        <input type="file" name="resume" required accept=".pdf,.doc,.docx"
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">PDF, DOC, or DOCX (Max 5MB)</p>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-900 mb-2">Cover Letter</label>
-                        <textarea name="cover_letter" rows="4" placeholder="Tell the employer why you're interested..."
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm"></textarea>
-                    </div>
-
-                    <button type="submit" style="background-color: #f53a6b; color: white; padding: 12px 16px; border-radius: 6px; font-weight: 700; width: 100%; border: none; cursor: pointer; margin-bottom: 10px;">
-                        Submit Application
-                    </button>
-                    <button type="button" onclick="closeApplyModal()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg text-gray-900 font-semibold hover:bg-gray-50">
-                        Cancel
-                    </button>
-                </form>
-            </div>
-        </div>
-    @endauth
-
     @include('components.footer')
 
     <script>
-        function showApplyModal() {
-            document.getElementById('applyModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeApplyModal() {
-            document.getElementById('applyModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
+        function toggleSaveJob(e, jobId) {
+            e.preventDefault();
+            if (!jobId) jobId = {{ $job->id }};
+            
+            const btn = document.getElementById('saveJobBtn');
+            const isSaved = btn.dataset.saved === 'true';
+            const url = isSaved ? `/api/jobs/${jobId}/save` : `/api/jobs/${jobId}/save`;
+            const method = isSaved ? 'DELETE' : 'POST';
 
-        document.getElementById('applyModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeApplyModal();
-            }
-        });
+            fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const newSavedState = !isSaved;
+                    btn.dataset.saved = newSavedState ? 'true' : 'false';
+                    btn.textContent = newSavedState ? '★ Saved' : '☆ Save Job';
+                    btn.style.backgroundColor = newSavedState ? '#f59e0b' : '#f3f4f6';
+                    btn.style.color = newSavedState ? 'white' : '#1f2937';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save job. Please try again.');
+            });
+        }
     </script>
 </body>
 </html>

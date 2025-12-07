@@ -1,7 +1,15 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Jobs - JobStreet</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50">
+    @include('components.navbar')
 
-@section('content')
-<div class="py-12">
+    <div class="py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
@@ -66,13 +74,13 @@
                                     View
                                 </a>
                                 @if($job->trashed())
-                                    <form action="{{ route('admin.restore-job', $job) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('admin.jobs.restore', $job) }}" method="POST" style="display:inline;">
                                         @csrf
                                         <button type="submit" class="text-green-600 hover:text-green-700 text-sm font-medium">
                                             Restore
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.delete-job', $job) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('admin.jobs.permanent-delete', $job) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" onclick="return confirm('Permanently delete?')" class="text-red-600 hover:text-red-700 text-sm font-medium">
@@ -80,7 +88,7 @@
                                         </button>
                                     </form>
                                 @else
-                                    <form action="{{ route('admin.delete-job', $job) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('admin.jobs.permanent-delete', $job) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" onclick="return confirm('Soft delete this job?')" class="text-red-600 hover:text-red-700 text-sm font-medium">
@@ -101,4 +109,5 @@
         </div>
     </div>
 </div>
-@endsection
+</body>
+</html>

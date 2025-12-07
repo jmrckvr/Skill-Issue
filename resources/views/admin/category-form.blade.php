@@ -1,7 +1,15 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Form - JobStreet</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50">
+    @include('components.navbar')
 
-@section('content')
-<div class="py-12">
+    <div class="py-12">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow">
             <div class="p-6 border-b border-gray-200">
@@ -79,4 +87,5 @@
         </div>
     </div>
 </div>
-@endsection
+</body>
+</html>

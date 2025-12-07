@@ -18,6 +18,14 @@ class JobApplication extends Model
         'status',
         'rejection_reason',
         'reviewed_at',
+        'applicant_name',
+        'applicant_email',
+        'applicant_phone',
+        'applicant_location',
+        'applicant_skills',
+        'applicant_bio',
+        'applicant_profile_picture',
+        'application_status',
     ];
 
     protected $casts = [

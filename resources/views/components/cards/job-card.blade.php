@@ -1,9 +1,9 @@
-@props(['job', 'clickable' => true])
+@props(['job', 'clickable' => true, 'sidebar' => false])
 
 <div @class([
-    'bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100',
-    'cursor-pointer hover:border-blue-400 transform hover:-translate-y-1' => $clickable
-])>
+    'bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 job-card',
+    'cursor-pointer hover:border-blue-400 transform hover:-translate-y-1' => $clickable && $sidebar,
+]) data-job-id="{{ $job->id }}" style="pointer-events: auto; cursor: pointer; @if($sidebar) cursor: pointer; @endif">
     <!-- Header with Company Logo and Title -->
     <div class="flex items-start justify-between mb-4">
         <div class="flex-1">
@@ -12,9 +12,18 @@
             </h3>
             <p class="text-sm text-gray-600">{{ $job->company->name }}</p>
         </div>
-        @if($job->company->logo_path)
+        @php
+            $logoUrl = null;
+            if ($job->logo) {
+                $logoUrl = str_starts_with($job->logo, 'http') ? $job->logo : asset('storage/' . $job->logo);
+            } elseif ($job->company->logo_path) {
+                $logoUrl = str_starts_with($job->company->logo_path, 'http') ? $job->company->logo_path : asset('storage/' . $job->company->logo_path);
+            }
+        @endphp
+
+        @if($logoUrl)
             <img
-                src="{{ asset('storage/' . $job->company->logo_path) }}"
+                src="{{ $logoUrl }}"
                 alt="{{ $job->company->name }}"
                 class="w-14 h-14 rounded-lg object-cover ml-4 flex-shrink-0"
                 loading="lazy"
@@ -83,8 +92,5 @@
         <span class="text-xs text-gray-500">
             📅 {{ $job->published_at->diffForHumans() }}
         </span>
-        <a href="{{ route('jobs.show', $job) }}" class="text-blue-600 hover:text-blue-800 font-semibold text-sm transition">
-            View Details →
-        </a>
     </div>
 </div>

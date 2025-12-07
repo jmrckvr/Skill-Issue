@@ -38,6 +38,7 @@ class GoogleAuthController extends Controller
                 'google_id' => $googleUser->getId(),
                 'password' => bcrypt(Str::random(24)),
                 'email_verified_at' => now(),
+                'role' => 'applicant', // Google Sign-In registration always creates Applicant accounts
             ]
         );
 

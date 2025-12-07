@@ -25,6 +25,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 150,
                 'industry' => 'Information Technology',
+                'logo_path' => 'https://www.acmetechsolutions.org/images/logo.svg',
                 'is_verified' => true,
             ],
             [
@@ -39,6 +40,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 500,
                 'industry' => 'Finance & Banking',
+                'logo_path' => 'https://i.pinimg.com/736x/8b/c8/e8/8bc8e8bfa61a074d47b65bd97df4229e.jpg',
                 'is_verified' => true,
             ],
             [
@@ -53,6 +55,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 800,
                 'industry' => 'Healthcare',
+                'logo_path' => 'https://i.pinimg.com/736x/2c/f0/59/2cf0591afdd70f1fb0324a1a7ff23d35.jpg',
                 'is_verified' => true,
             ],
             [
@@ -67,6 +70,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 1200,
                 'industry' => 'Retail',
+                'logo_path' => 'https://i.pinimg.com/736x/1e/2a/01/1e2a01d3949971080335380d6a2970af.jpg',
                 'is_verified' => true,
             ],
             [
@@ -81,6 +85,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 350,
                 'industry' => 'Engineering & Construction',
+                'logo_path' => 'https://i.pinimg.com/736x/61/cf/85/61cf8599c3bb4cb2927a2155d7a41985.jpg',
                 'is_verified' => true,
             ],
             [
@@ -95,6 +100,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 50,
                 'industry' => 'Technology & Startups',
+                'logo_path' => 'https://i.pinimg.com/1200x/cc/9e/03/cc9e03f36a15663a9c4926ab9bf5ba16.jpg',
                 'is_verified' => false,
             ],
             [
@@ -109,6 +115,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 200,
                 'industry' => 'Information Technology',
+                'logo_path' => 'https://i.pinimg.com/1200x/90/05/70/9005701d3ae1e381c99e2100250f4a5a.jpg',
                 'is_verified' => true,
             ],
             [
@@ -123,6 +130,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 600,
                 'industry' => 'Healthcare',
+                'logo_path' => 'https://i.pinimg.com/1200x/49/d0/f1/49d0f1137a8b54e5e72683eca060d5b5.jpg',
                 'is_verified' => true,
             ],
             [
@@ -137,6 +145,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 100,
                 'industry' => 'Education & Training',
+                'logo_path' => 'https://i.pinimg.com/1200x/15/ed/45/15ed45bbf9294f03dc922357889df4ab.jpg',
                 'is_verified' => true,
             ],
             [
@@ -151,6 +160,7 @@ class CompanySeeder extends Seeder
                 'country' => 'Philippines',
                 'employee_count' => 450,
                 'industry' => 'Logistics & Transportation',
+                'logo_path' => 'https://i.pinimg.com/1200x/4d/9a/97/4d9a97e966668b8a9158617ba5637a56.jpg',
                 'is_verified' => true,
             ],
         ];

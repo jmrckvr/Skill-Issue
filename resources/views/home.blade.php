@@ -11,44 +11,75 @@
     @include('components.navbar')
 
     <!-- Hero Section with Search -->
-    <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-16 md:py-28">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-                    Find Your <span class="text-blue-200">Dream Job</span>
-                </h1>
-                <p class="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
-                    Search from thousands of job openings from top companies in Philippines and across Asia
-                </p>
-            </div>
+    <div class="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-20 md:py-32 overflow-hidden">
+        <!-- Decorative pink circles -->
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-pink-500 rounded-full opacity-20 blur-3xl"></div>
+        <div class="absolute top-20 -left-20 w-40 h-40 bg-pink-600 rounded-full opacity-10 blur-3xl"></div>
+        <div class="absolute -bottom-10 right-10 w-48 h-48 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
 
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
             <!-- Search Bar -->
-            <form action="{{ route('jobs.search') }}" method="GET" class="max-w-4xl mx-auto">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 bg-white rounded-xl p-2 shadow-2xl">
-                    <div class="relative">
-                        <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <input type="text" name="keyword" placeholder="Job title, keyword..." 
-                            class="w-full pl-11 pr-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value="{{ request('keyword', '') }}">
+            <form action="{{ route('jobs.search') }}" method="GET" class="max-w-5xl mx-auto">
+                <div class="space-y-6">
+                    <!-- What and Where Labels -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                        <div>
+                            <label class="text-white text-lg font-semibold mb-2 block">What</label>
+                        </div>
+                        <div>
+                            <label class="text-white text-lg font-semibold mb-2 block">Where</label>
+                        </div>
                     </div>
-                    <div class="relative">
-                        <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <input type="text" name="location" placeholder="City or location" 
-                            class="w-full pl-11 pr-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value="{{ request('location', '') }}">
+
+                    <!-- Input Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <!-- What Input -->
+                        <div class="md:col-span-1">
+                            <input type="text" name="keyword" placeholder="Enter keywords" 
+                                class="w-full px-5 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium"
+                                value="{{ request('keyword', '') }}">
+                        </div>
+
+                        <!-- Classification Dropdown -->
+                        <div class="md:col-span-1">
+                            <select name="category" class="w-full px-5 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium">
+                                <option value="">Any classification</option>
+                                @forelse($categories ?? [] as $category)
+                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @empty
+                                    <option value="">No categories available</option>
+                                @endforelse
+                            </select>
+                        </div>
+
+                        <!-- Where Input and Search Button -->
+                        <div class="md:col-span-1 flex gap-3">
+                            <input type="text" name="location" placeholder="Enter suburb, city, or region" 
+                                class="flex-1 px-5 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium"
+                                value="{{ request('location', '') }}">
+                            <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-lg font-bold transition duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap">
+                                SEEK
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-200 col-span-1 sm:col-span-2 md:col-span-1 transform hover:scale-105 active:scale-95">
-                        Search Jobs
-                    </button>
+
+                    <!-- More Options Link -->
+                    <div class="text-right">
+                        <a href="{{ route('jobs.search') }}" class="text-blue-200 hover:text-white font-medium text-sm transition duration-300 inline-flex items-center gap-1">
+                            More options 
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </form>
+        </div>
+    </div>
 
-            <p class="text-center text-blue-100 text-sm mt-6">
+            <p class="text-center text-black text-sm mt-6">
                 🔥 Popular: PHP Developer, UI/UX Designer, Data Scientist, Marketing Manager
             </p>
         </div>
@@ -112,7 +143,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($latestJobs as $job)
-                    <x-cards.job-card :job="$job" />
+                    <a href="javascript:void(0)" class="job-card-link block" data-job-id="{{ $job->id }}" style="text-decoration: none; color: inherit;">
+                        <x-cards.job-card :job="$job" :sidebar="true" />
+                    </a>
                 @empty
                     <div class="col-span-full text-center py-16">
                         <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +177,43 @@
         </div>
     </div>
 
+    <!-- Include Job Detail Sidebar -->
+    @include('components.job-detail-sidebar')
+
     <!-- Footer -->
     @include('components.footer')
+
+    <style>
+        .job-card-link {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+    </style>
+
+    <script>
+        // Initialize job card click handlers
+        function initJobCards() {
+            const links = document.querySelectorAll('.job-card-link');
+            
+            links.forEach((link) => {
+                const jobId = link.getAttribute('data-job-id');
+                
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openJobDetailSidebar(jobId);
+                });
+            });
+        }
+
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initJobCards);
+        } else {
+            initJobCards();
+        }
+    </script>
 </body>
 </html>

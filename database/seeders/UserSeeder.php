@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
                 'name' => $jobseeker['name'],
                 'email' => $jobseeker['email'],
                 'password' => bcrypt('password'),
-                'role' => 'jobseeker',
+                'role' => 'applicant',
                 'email_verified_at' => now(),
                 'is_active' => true,
             ]);
