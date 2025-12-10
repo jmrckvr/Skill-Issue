@@ -31,9 +31,9 @@ class User extends Authenticatable
         'bio',
         'profile_picture',
         'resume_path',
-        'linkedin_url',
+        'facebook_url',
         'github_url',
-        'portfolio_url',
+        'instagram_url',
         'is_applicant',
         'is_employer',
     ];

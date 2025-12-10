@@ -24,7 +24,8 @@
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
+            <!-- Active Jobs -->
+            <a href="{{ route('employer.jobs.index') }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer">
                 <div class="flex items-center">
                     <div class="p-3 bg-blue-100 rounded-lg">
                         <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -36,9 +37,10 @@
                         <p class="text-2xl font-bold text-gray-900">{{ $activeJobs }}</p>
                     </div>
                 </div>
-            </div>
+            </a>
 
-            <div class="bg-white rounded-lg shadow p-6">
+            <!-- Total Applications -->
+            <a href="{{ route('employer.jobs.index') }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer">
                 <div class="flex items-center">
                     <div class="p-3 bg-green-100 rounded-lg">
                         <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -50,9 +52,10 @@
                         <p class="text-2xl font-bold text-gray-900">{{ $totalApplications }}</p>
                     </div>
                 </div>
-            </div>
+            </a>
 
-            <div class="bg-white rounded-lg shadow p-6">
+            <!-- Pending Reviews -->
+            <a href="{{ route('employer.jobs.index') }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer">
                 <div class="flex items-center">
                     <div class="p-3 bg-purple-100 rounded-lg">
                         <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
@@ -64,7 +67,7 @@
                         <p class="text-2xl font-bold text-gray-900">{{ $pendingApplications }}</p>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Company Profile Section -->

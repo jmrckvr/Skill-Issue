@@ -73,7 +73,7 @@
                                         if ($company->logo_path) {
                                             if (filter_var($company->logo_path, FILTER_VALIDATE_URL)) {
                                                 $logoUrl = $company->logo_path;
-                                            } elseif (str_starts_with($company->logo_path, 'logos/')) {
+                                            } elseif (str_starts_with($company->logo_path, 'logos/') || file_exists(public_path($company->logo_path))) {
                                                 $logoUrl = asset($company->logo_path);
                                             } else {
                                                 $logoUrl = asset('storage/' . $company->logo_path);

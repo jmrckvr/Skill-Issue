@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center h-16" style="gap: 60px;">
             <!-- Logo -->
             <a href="<?php echo e(route('home')); ?>" class="flex-shrink-0 hover:opacity-80 transition duration-300">
-                <img src="/logos/skillissueiconn.png" alt="Skill Issue Logo" style="height: 70px; width: auto; background: transparent; padding: 0; margin: 0;">
+                <img src="/logos/skillissueiconn.png" alt="Skill Issue Logo" style="height: 50px; width: auto; background: transparent; padding: 0; margin: 0;">
             </a>
 
             <!-- Center Navigation Links - Spread Out -->

@@ -1,0 +1,2 @@
+<?php echo $__env->make('employer.jobs.create', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php /**PATH C:\Users\jmrck\Project Folder\Skill1ssue\jobstreet\resources\views/employer/jobs/edit.blade.php ENDPATH**/ ?>

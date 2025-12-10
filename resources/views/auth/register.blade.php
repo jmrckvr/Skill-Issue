@@ -6,14 +6,15 @@
     <title>Sign Up - Skill Issue</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body style="background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%); min-height: 100vh; margin: 0;">
-    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+<body style="background-image: url('/logos/bg1.jpg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; margin: 0; position: relative;">
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="w-full max-w-md">
             <!-- Header -->
             <div class="text-center mb-8">
                 <a href="{{ route('home') }}" class="inline-block">
-                    <div class="text-3xl font-bold text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Skill Issue</div>
-                    <p class="text-white text-sm mt-1" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Find your dream job today</p>
+                    <div class="text-3xl font-bold text-white" style="text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 8px rgba(0,0,0,0.6), 4px 4px 12px rgba(0,0,0,0.4);">Skill Issue</div>
+                    <p class="text-white text-sm mt-1" style="text-shadow: 0 0 8px rgba(0,0,0,0.8), 2px 2px 6px rgba(0,0,0,0.6);">Find your dream job today</p>
                 </a>
             </div>
 

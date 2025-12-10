@@ -122,12 +122,6 @@
                                     class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition">
                                 Upload Resume
                             </button>
-                            <?php if($user->resume_path): ?>
-                                <a href="<?php echo e(route('applicant.download-resume')); ?>"
-                                   class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition">
-                                    Download Resume
-                                </a>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -137,6 +131,71 @@
                     <?php echo csrf_field(); ?>
                     <input type="file" id="resumeInput" name="resume" accept=".pdf" style="display: none;">
                 </form>
+
+                <!-- Skills Section -->
+                <?php if($user->skills): ?>
+                    <div class="bg-white rounded-lg shadow p-6 mt-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Skills</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <?php
+                                $skillList = $user->skills ? explode(',', $user->skills) : [];
+                            ?>
+                            <?php $__currentLoopData = $skillList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    <?php echo e(trim($skill)); ?>
+
+                                </span>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Bio Section -->
+                <?php if($user->bio): ?>
+                    <div class="bg-white rounded-lg shadow p-6 mt-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">About Me</h3>
+                        <p class="text-gray-700 leading-relaxed"><?php echo e($user->bio); ?></p>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Social Links Section -->
+                <?php if($user->facebook_url || $user->github_url || $user->instagram_url): ?>
+                    <div class="bg-white rounded-lg shadow p-6 mt-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Social Links</h3>
+                        <div class="space-y-3">
+                            <?php if($user->facebook_url): ?>
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                    <a href="<?php echo e($user->facebook_url); ?>" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 font-medium truncate">
+                                        Facebook Profile
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+                            <?php if($user->github_url): ?>
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                    <a href="<?php echo e($user->github_url); ?>" target="_blank" rel="noopener noreferrer" class="text-gray-800 hover:text-gray-900 font-medium truncate">
+                                        GitHub Profile
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+                            <?php if($user->instagram_url): ?>
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0m4.5 8.5c.5 0 .9-.4.9-.9s-.4-.9-.9-.9-.9.4-.9.9.4.9.9.9m-4.5 1.5c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5m-4-8.5h8c1.657 0 3 1.343 3 3v8c0 1.657-1.343 3-3 3h-8c-1.657 0-3-1.343-3-3v-8c0-1.657 1.343-3 3-3z"/>
+                                    </svg>
+                                    <a href="<?php echo e($user->instagram_url); ?>" target="_blank" rel="noopener noreferrer" class="text-pink-600 hover:text-pink-700 font-medium truncate">
+                                        Instagram Profile
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Resume Section -->
                 <?php if($user->resume_path): ?>

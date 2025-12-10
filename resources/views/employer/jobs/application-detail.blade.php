@@ -63,11 +63,11 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Phone</p>
-                            <p class="text-gray-900 font-medium text-sm">{{ $application->applicant_phone ?? $application->user->contact_number ?? 'Not provided' }}</p>
+                            <p class="text-gray-900 font-medium text-sm">{{ $application->user->contact_number ?? $application->applicant_phone ?? 'Not provided' }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Location</p>
-                            <p class="text-gray-900 font-medium text-sm">{{ $application->applicant_location ?? $application->user->location ?? '-' }}</p>
+                            <p class="text-gray-900 font-medium text-sm">{{ $application->user->location ?? $application->applicant_location ?? '-' }}</p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase font-semibold">Status</p>
@@ -84,7 +84,7 @@
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">Skills</h3>
                                 <div class="flex flex-wrap gap-2">
                                     @php
-                                        $skills = $application->applicant_skills ?? $application->user->skills;
+                                        $skills = $application->user->skills ?? $application->applicant_skills;
                                         $skillList = $skills ? explode(',', $skills) : [];
                                     @endphp
                                     @if(count($skillList) > 0)
@@ -104,7 +104,7 @@
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">About</h3>
                                 @php
-                                    $bio = $application->applicant_bio ?? $application->user->bio;
+                                    $bio = $application->user->bio ?? $application->applicant_bio;
                                 @endphp
                                 @if($bio)
                                     <p class="text-gray-700 leading-relaxed">{{ $bio }}</p>

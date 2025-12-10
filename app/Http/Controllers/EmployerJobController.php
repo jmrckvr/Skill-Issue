@@ -73,6 +73,20 @@ class EmployerJobController extends Controller
     }
 
     /**
+     * Display a specific job
+     */
+    public function show(Job $job): View
+    {
+        $this->authorize('view', $job);
+        $applicationCount = $job->applications()->count();
+        $acceptedCount = $job->applications()->where('status', 'accepted')->count();
+        $rejectedCount = $job->applications()->where('status', 'rejected')->count();
+        $pendingCount = $job->applications()->where('status', 'pending')->count();
+
+        return view('employer.jobs.show', compact('job', 'applicationCount', 'acceptedCount', 'rejectedCount', 'pendingCount'));
+    }
+
+    /**
      * Show the form for editing a job
      */
     public function edit(Job $job): View

@@ -30,7 +30,7 @@
 
     <div class="min-h-screen bg-gray-50 py-12">
         <div class="container mx-auto px-4">
-            <div class="max-w-2xl mx-auto">
+            <div class="max-w-4xl mx-auto">
                 <!-- Header -->
                 <div class="mb-8">
                     <a href="<?php echo e(route('applicant.dashboard')); ?>" class="text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-2 mb-4">
@@ -39,14 +39,61 @@
                         </svg>
                         Back to Dashboard
                     </a>
-                    <h1 class="text-4xl font-bold text-gray-900">Edit Profile</h1>
-                    <p class="text-gray-600 mt-2">Update your profile information</p>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-4xl font-bold text-gray-900">Edit Profile</h1>
+                            <p class="text-gray-600 mt-2">Update your profile information</p>
+                        </div>
+                        <!-- Profile Picture Edit -->
+                        <div class="text-center">
+                            <div class="relative group inline-block">
+                                <?php if($user->profile_picture && str_starts_with($user->profile_picture, 'profile_pictures/')): ?>
+                                    <img src="<?php echo e(asset('storage/' . $user->profile_picture)); ?>" 
+                                         alt="<?php echo e($user->name); ?>"
+                                         class="w-32 h-32 rounded-full object-cover border-4 border-blue-600">
+                                <?php else: ?>
+                                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-4xl font-bold border-4 border-blue-600">
+                                        <?php echo e(substr($user->name, 0, 1)); ?>
+
+                                    </div>
+                                <?php endif; ?>
+                                <button type="button" onclick="document.getElementById('profilePictureInput').click()" 
+                                        class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 opacity-0 group-hover:opacity-100 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Form -->
-                <form method="POST" action="<?php echo e(route('applicant.update-profile')); ?>" class="bg-white rounded-lg border border-gray-200 p-8">
+                <form method="POST" action="<?php echo e(route('applicant.update-profile')); ?>" enctype="multipart/form-data" class="bg-white rounded-lg border border-gray-200 p-8">
                     <?php echo csrf_field(); ?>
                     <?php echo method_field('PUT'); ?>
+
+                    <!-- Hidden Profile Picture Upload -->
+                    <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" style="display: none;">
+                    <script>
+                        document.getElementById('profilePictureInput').addEventListener('change', function() {
+                            if (this.files.length > 0) {
+                                const formData = new FormData();
+                                formData.append('profile_picture', this.files[0]);
+                                formData.append('_token', document.querySelector('input[name="_token"]').value);
+                                
+                                fetch('<?php echo e(route("applicant.upload-picture")); ?>', {
+                                    method: 'POST',
+                                    body: formData
+                                }).then(response => {
+                                    if (response.ok) {
+                                        window.location.reload();
+                                    }
+                                }).catch(error => console.error('Error:', error));
+                            }
+                        });
+                    </script>
 
                     <!-- Name -->
                     <div class="mb-6">
@@ -209,19 +256,19 @@ unset($__errorArgs, $__bag); ?>
                     <div class="mb-8 pb-8 border-b border-gray-200">
                         <h3 class="text-lg font-bold text-gray-900 mb-6">Social Links (Optional)</h3>
 
-                        <!-- LinkedIn URL -->
+                        <!-- Facebook URL -->
                         <div class="mb-6">
-                            <label for="linkedin_url" class="block text-sm font-bold text-gray-900 mb-2">
-                                LinkedIn URL
+                            <label for="facebook_url" class="block text-sm font-bold text-gray-900 mb-2">
+                                Facebook URL
                             </label>
                             <input 
                                 type="url" 
-                                name="linkedin_url" 
-                                id="linkedin_url" 
-                                value="<?php echo e(old('linkedin_url', $user->linkedin_url)); ?>"
-                                placeholder="https://linkedin.com/in/yourprofile"
+                                name="facebook_url" 
+                                id="facebook_url" 
+                                value="<?php echo e(old('facebook_url', $user->facebook_url)); ?>"
+                                placeholder="https://facebook.com/yourprofile"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <?php $__errorArgs = ['linkedin_url'];
+                            <?php $__errorArgs = ['facebook_url'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -257,19 +304,19 @@ endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        <!-- Portfolio URL -->
+                        <!-- Instagram URL -->
                         <div class="mb-6">
-                            <label for="portfolio_url" class="block text-sm font-bold text-gray-900 mb-2">
-                                Portfolio URL
+                            <label for="instagram_url" class="block text-sm font-bold text-gray-900 mb-2">
+                                Instagram URL
                             </label>
                             <input 
                                 type="url" 
-                                name="portfolio_url" 
-                                id="portfolio_url" 
-                                value="<?php echo e(old('portfolio_url', $user->portfolio_url)); ?>"
-                                placeholder="https://yourportfolio.com"
+                                name="instagram_url" 
+                                id="instagram_url" 
+                                value="<?php echo e(old('instagram_url', $user->instagram_url)); ?>"
+                                placeholder="https://instagram.com/yourprofile"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <?php $__errorArgs = ['portfolio_url'];
+                            <?php $__errorArgs = ['instagram_url'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }

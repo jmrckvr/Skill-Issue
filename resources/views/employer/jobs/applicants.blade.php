@@ -72,11 +72,11 @@
                                     <td class="px-6 py-4">
                                         <div class="space-y-1">
                                             <p class="text-sm text-gray-700">{{ $application->applicant_email }}</p>
-                                            <p class="text-sm text-gray-500">{{ $application->applicant_phone ?? 'N/A' }}</p>
+                                            <p class="text-sm text-gray-500">{{ $application->user->contact_number ?? $application->applicant_phone ?? 'N/A' }}</p>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-600">
-                                        {{ $application->applicant_location ?? '-' }}
+                                        {{ $application->user->location ?? $application->applicant_location ?? '-' }}
                                     </td>
                                     <td class="px-6 py-4">
                                         @if($application->status === 'pending')

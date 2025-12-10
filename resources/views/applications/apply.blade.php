@@ -19,6 +19,8 @@
                         @if($job->company->logo_path)
                             @if(filter_var($job->company->logo_path, FILTER_VALIDATE_URL))
                                 <img src="{{ $job->company->logo_path }}" alt="{{ $job->company->name }}" class="w-24 h-24 rounded-lg object-cover">
+                            @elseif(file_exists(public_path($job->company->logo_path)))
+                                <img src="{{ asset($job->company->logo_path) }}" alt="{{ $job->company->name }}" class="w-24 h-24 rounded-lg object-cover">
                             @else
                                 <img src="{{ asset('storage/' . $job->company->logo_path) }}" alt="{{ $job->company->name }}" class="w-24 h-24 rounded-lg object-cover">
                             @endif

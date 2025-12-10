@@ -28,7 +28,7 @@
                                 if ($job->company->logo_path) {
                                     if (filter_var($job->company->logo_path, FILTER_VALIDATE_URL)) {
                                         $companyLogoUrl = $job->company->logo_path;
-                                    } elseif (str_starts_with($job->company->logo_path, 'logos/')) {
+                                    } elseif (str_starts_with($job->company->logo_path, 'logos/') || file_exists(public_path($job->company->logo_path))) {
                                         $companyLogoUrl = asset($job->company->logo_path);
                                     } else {
                                         $companyLogoUrl = asset('storage/' . $job->company->logo_path);

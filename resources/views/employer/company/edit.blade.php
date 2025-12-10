@@ -29,7 +29,13 @@
                     <div class="flex-shrink-0">
                         @if($company->logo_path)
                             @php
-                                $companyLogoUrl = str_starts_with($company->logo_path, 'http') ? $company->logo_path : asset('storage/' . $company->logo_path);
+                                if (filter_var($company->logo_path, FILTER_VALIDATE_URL)) {
+                                    $companyLogoUrl = $company->logo_path;
+                                } elseif (str_starts_with($company->logo_path, 'logos/') || file_exists(public_path($company->logo_path))) {
+                                    $companyLogoUrl = asset($company->logo_path);
+                                } else {
+                                    $companyLogoUrl = asset('storage/' . $company->logo_path);
+                                }
                             @endphp
                             <img id="logoPreview" src="{{ $companyLogoUrl }}" alt="Logo" class="h-32 w-32 object-contain bg-gray-100 rounded-lg" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%22128%22 viewBox=%220 0 128 128%22%3E%3Crect width=%22128%22 height=%22128%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
                         @else

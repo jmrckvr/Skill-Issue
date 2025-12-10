@@ -29,7 +29,13 @@
                     <div class="bg-white rounded-lg shadow p-6">
                         <h2 class="text-lg font-bold text-gray-900 mb-4">Company Logo</h2>
                         @php
-                            $companyLogoUrl = str_starts_with($company->logo_path, 'http') ? $company->logo_path : asset('storage/' . $company->logo_path);
+                            if (filter_var($company->logo_path, FILTER_VALIDATE_URL)) {
+                                $companyLogoUrl = $company->logo_path;
+                            } elseif (str_starts_with($company->logo_path, 'logos/') || file_exists(public_path($company->logo_path))) {
+                                $companyLogoUrl = asset($company->logo_path);
+                            } else {
+                                $companyLogoUrl = asset('storage/' . $company->logo_path);
+                            }
                         @endphp
                         <img src="{{ $companyLogoUrl }}" alt="{{ $company->name }}" class="h-40 w-40 object-contain" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22 viewBox=%220 0 160 160%22%3E%3Crect width=%22160%22 height=%22160%22 fill=%22%23E5E7EB%22/%3E%3C/svg%3E'">
                     </div>

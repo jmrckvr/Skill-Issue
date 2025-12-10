@@ -15,9 +15,21 @@
         @php
             $logoUrl = null;
             if ($job->logo) {
-                $logoUrl = str_starts_with($job->logo, 'http') ? $job->logo : asset('storage/' . $job->logo);
+                if (filter_var($job->logo, FILTER_VALIDATE_URL)) {
+                    $logoUrl = $job->logo;
+                } elseif (str_starts_with($job->logo, 'logos/') || file_exists(public_path($job->logo))) {
+                    $logoUrl = asset($job->logo);
+                } else {
+                    $logoUrl = asset('storage/' . $job->logo);
+                }
             } elseif ($job->company->logo_path) {
-                $logoUrl = str_starts_with($job->company->logo_path, 'http') ? $job->company->logo_path : asset('storage/' . $job->company->logo_path);
+                if (filter_var($job->company->logo_path, FILTER_VALIDATE_URL)) {
+                    $logoUrl = $job->company->logo_path;
+                } elseif (str_starts_with($job->company->logo_path, 'logos/') || file_exists(public_path($job->company->logo_path))) {
+                    $logoUrl = asset($job->company->logo_path);
+                } else {
+                    $logoUrl = asset('storage/' . $job->company->logo_path);
+                }
             }
         @endphp
 

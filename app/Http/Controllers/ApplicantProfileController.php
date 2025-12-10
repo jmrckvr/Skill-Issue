@@ -60,9 +60,9 @@ class ApplicantProfileController extends Controller
             'location' => 'nullable|string|max:255',
             'skills' => 'nullable|string|max:1000',
             'bio' => 'nullable|string|max:1000',
-            'linkedin_url' => 'nullable|url|max:255',
+            'facebook_url' => 'nullable|url|max:255',
             'github_url' => 'nullable|url|max:255',
-            'portfolio_url' => 'nullable|url|max:255',
+            'instagram_url' => 'nullable|url|max:255',
         ]);
 
         $user->update($validated);
