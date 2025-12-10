@@ -6,14 +6,15 @@
     <title>Sign Up - Skill Issue</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
-<body style="background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%); min-height: 100vh; margin: 0;">
-    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+<body style="background-image: url('/logos/bg1.jpg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; margin: 0; position: relative;">
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="w-full max-w-md">
             <!-- Header -->
             <div class="text-center mb-8">
                 <a href="<?php echo e(route('home')); ?>" class="inline-block">
-                    <div class="text-3xl font-bold text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Skill Issue</div>
-                    <p class="text-white text-sm mt-1" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Find your dream job today</p>
+                    <div class="text-3xl font-bold text-black">Skill Issue</div>
+                    <p class="text-black text-sm mt-1">Find your dream job today</p>
                 </a>
             </div>
 

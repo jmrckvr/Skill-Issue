@@ -13,8 +13,8 @@
             <!-- Header -->
             <div class="text-center mb-8">
                 <a href="<?php echo e(route('home')); ?>" class="inline-block">
-                    <div class="text-3xl font-bold text-white" style="text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 8px rgba(0,0,0,0.6), 4px 4px 12px rgba(0,0,0,0.4);">Skill Issue</div>
-                    <p class="text-white text-sm mt-1" style="text-shadow: 0 0 8px rgba(0,0,0,0.8), 2px 2px 6px rgba(0,0,0,0.6);">Find your dream job today</p>
+                    <div class="text-3xl font-bold text-black">Skill Issue</div>
+                    <p class="text-black text-sm mt-1">Find your dream job today</p>
                 </a>
             </div>
 
